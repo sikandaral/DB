@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name= "viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Inventory Website</title>
+    <link rel="icon" type="image/x-icon" href="store_image.png">
+    <link rel = "stylesheet" href = "home.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Staatliches&family=Teko&family=Titan+One&display=swap" rel="stylesheet">
+</head> 
+
+<body>
+
+    <div id="toppart">
+        <div id = "top-left-col">
+
+            <div id = "image-logo">
+                <img src ="Logo.PNG" width="170px" height="80px">
+            </div>
+
+            <div id="heading-left">
+                <h1>STORE INVENTORY MANAGEMENT</h1>
+            </div>
+
+            <div id="navbar-div">
+                <a class = "navbar-link" href= #form-page>Sign up</a>
+                <a class = "navbar-link" href= #form-page>Log in</a>
+                <a class = "navbar-link" href= #top-right-col>Contact</a>
+            </div>
+
+            <br><br><br>
+            <div id="top-left-text">
+            <br><br><br>
+            <p> This is a store Inventory Management Website.
+                <h5>
+                <br> NOTE FOR CUSTOMERS: If you’re accessing this website for the first time, please sign up if you want to place orders.
+                <br> NOTE FOR EMPLOYEES: If you’re accessing this website for the first time, your account has been created. you can login to use the functionalities which include: View Employees, View Orders and much more.
+                </h5>
+            </p><br>
+            </div>
+            <br>
+
+
+            <div id = "form-page">
+                  
+            
+            <fieldset>
+            <h2> Employee Log In </h2>
+            
+            <form action="/emp_login" method="post">
+                
+                <label for="name">User Name:</label><br>
+                <input type="text" id="username" name="username"><br>
+                <label for="passwrod">Password:</label><br>
+                <input type="text" id="password" name="password"><br><br>
+                <button type ="reset">Reset</button>
+                <input type="submit" value="Submit">
+                
+            </form>
+            </fieldset>
+            <br>
+
+            <fieldset>
+            <h2> Customer Signup </h2>
+            
+            <form action="/cust_signup" method="post">
+                <label for="name">First Name:</label>&emsp;
+                <input type="text" id="name" name="name"><br>
+
+                <label for="username">User name:</label>&emsp;
+                <input type="text" id="username" name="username"><br>
+                
+                <label for="password">Password:</label>&emsp;&nbsp;&nbsp;
+                <input type="text" id="password" name="password"><br>
+
+                <label for="address">Address:</label>&emsp;&emsp;&nbsp;
+                <input type="text" id="address" name="address"><br>
+
+                <label for="contact">Contact:</label>&emsp;&emsp;&nbsp;&nbsp;
+                <input type="text" id="contact" name="contact"><br><br>
+                <button type ="reset">Reset</button>
+                <input type="submit" value="Submit">
+                
+            </form>
+            </fieldset>
+           
+
+            <br>
+            <fieldset>
+            <h2> Customer Log In </h2>
+            <form action="/cust_login" method="post">
+                
+                <label for="name">User Name:</label><br>
+                <input type="text" id="username" name="username"><br>
+                <label for="passwrod">Password:</label><br>
+                <input type="text" id="password" name="password"><br><br>
+                <button type ="reset">Reset</button>
+                <input type="submit" value="Submit">
+            </form>
+            </fieldset>
+            
+            <br>
+            
+            <h3> Click the button below to view employees </h3>
+               
+            <form action="/all_emp" method="post">
+                <input type = "Submit" value="View Employees">
+            </form>
+
+            <h3> Click the button below to view all items </h3>
+               
+            <form action="/all_items" method="post">
+                <input type = "Submit" value="View Items">
+            </form>
+
+            </div>
+            
+       
+        </div>        
+        
+
+
+
+
+
+        <div id = "top-right-col">
+            <h2> &emsp;&emsp;&emsp;S.I.M.P. <br> PAKISTAN'S NO. 1</h2>
+            <!-- <h4> Software Engineer </h4> -->
+            <img src ="store_image.png" width="300px" height="auto">
+
+            <h3> CONTACT </h3>
+            <h6><li style="list-style:square;">24100079@lums.edu.pk</li></h6>
+            <h6><li style="list-style:square;"> +92 3314732952 </li></h6>
+            <h6><li style="list-style:square;"> Lahore, Pakistan </li></h6>
+
+
+            <h3> Qualities </h3>
+            <div id="lang-l">
+                Satifaction <br> Reviews <br> Storage <br> Scale <br>
+            </div>
+
+            <div id="lang-r">
+                <img src ="full_grip_language.PNG" width="150px" height="auto">
+                <img src ="full_grip_language.PNG" width="150px" height="auto">
+                <img src ="semi_grip_language.PNG" width="150px" height="auto">
+                <img src ="semi_grip_language.PNG" width="150px" height="auto">
+                <!-- <img src ="semi_grip_language.PNG" width="150px" height="auto"> -->
+                <!-- <div repeat= "5" class="circle-fill"></div> -->
+            </div>
+            <br><br><br><br><br>
+
+            <h3> Data Base Actors </h3>
+            <h6><li style="list-style:square;"> Pharmacies</li></h6>
+            <h6><li style="list-style:square;"> Company Manager </li></h6>
+            <h6><li style="list-style:square;"> Company Restocker </li></h6>
+            <h6><li style="list-style:square;"> Company Suppliers </li></h6>
+
+
+            
+        </div>
+    </div>
+

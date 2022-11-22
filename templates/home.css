@@ -1,0 +1,235 @@
+body {
+    font-family: 'Staatliches', cursive;
+    /* font-family: 'Teko', sans-serif; */
+    font-size: 30px;
+}
+
+a.navbar-link{
+    font-family: 'Teko', sans-serif;
+    text-decoration: none;
+    color: rgb(255, 15, 15);
+    font-size: 20px;
+    /* font-style:italic; */
+}
+
+
+
+#heading-left{
+    float: left;
+    width: 50%;
+    /* border: 1px solid white;  */
+    color: white;
+    /* column-gap: 20px; */
+    padding-left: 20px;
+    padding-left: 40px;
+    /* height: 70px; */
+    /* border-left: white;
+    border-right: white; */
+    /* border-top: white; */
+}
+
+
+#image-logo{
+    padding-top: 35px;
+    padding-left: 20px;
+    width: 20%;
+    /* background-color: white; */
+    float: left;
+}
+
+
+#navbar-div{                    /* It is for the specific box/part in the html file only*/    
+    display: flex;
+    justify-content: flex-end;  /* to move the words/text to the right */
+    column-gap: 20px;           /* to put gap b/w the words */
+    padding: 10px 0px;         /* first is top padding, second is right padding */
+    padding-right: 10px;
+    border: 1px solid white;  /* draws a box around the entire row */
+    font-weight: 500;           /* adjusting the weight of the font */
+    
+    float: right;
+    width: 20%; 
+    height: auto;
+
+    background-color:rgba(72, 71, 75, 0.895);
+}
+
+
+
+#toppart{
+    display: flex;
+    justify-content:space-around;
+    column-gap: 10px;
+    padding: 0 0;
+    margin-top: 0;
+    background-color: rgb(191, 191, 238);
+    height: 1650px;
+}
+
+#toppart>div{
+    /* height: 150px; */
+    border: 4px solid black;
+}
+
+#top-left-col{
+    /* height: 250px; */
+    background-color: rgb(12, 1, 39);
+    font-family: 'Anek Latin', sans-serif;
+    width: 70%;
+    font-size: 20px;           /* in px always */
+    font-weight: 100;          /* without px, normal number */
+    color: white;
+    height: 350px;
+    /* padding-left: 10px; */
+}
+
+#heading-left>img{
+    padding-left: 0px;
+}
+
+#top-left-col>h1{
+    /* font-family: 'Rajdhani', sans-serif; */
+    font-size: 44px;
+    font-weight: 800;
+}
+
+#top-left-text{
+    font-size: 21px;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-weight: 500;
+}
+
+#top-left-col-buttonn{
+    background-color: rgb(35, 61, 227);
+    color: white;
+    
+    font-weight: 600;
+    font-size: 18px;
+    padding: 15px 25px;
+    border: 10;
+    /* padding-left: 70px; */
+}
+
+#top-right-col{
+    background-color:rgba(4, 0, 37, 0.895);
+    height: 1650px;
+    width: 30%;             /* was the picture part so given less space */
+    text-align: center;     /* to align the picture in the centre   */
+}
+
+#top-right-col>h2{
+    font-size: 35px;
+    color: white;
+    text-align: left;
+    padding-left: 15px;
+    font-family: 'Anek Latin', sans-serif; 
+}
+
+#top-right-col>h3{
+    font-weight: 600;
+    font-size: 24px;
+    color: white;
+    text-align: left;
+    padding-left: 15px;
+    font-family: 'Anek Latin', sans-serif; 
+    border: 3px solid black;
+    background-color: rgb(12, 1, 39);
+}
+
+#top-right-col>h4{
+    color: white;
+    text-align: left;
+    padding-left: 15px;
+    font-family: 'Anek Latin', sans-serif; 
+}
+
+#top-right-col>h6{
+    line-height: 30px;
+    list-style: circle;
+    font-weight: 200;
+    color: white;
+    text-align: left;
+    padding-left: 35px;
+    font-family: 'Anek Latin', sans-serif; 
+
+}
+
+li{
+    line-height: 0px;
+    padding-left: 20px;
+}
+
+#top-right-col>img{
+    border: 3px solid white;
+    border-radius: 100%;
+}
+
+#lang-l{
+    height: 220px;
+    float: left;
+    width: 40%;
+    /* background-color: aqua; */
+    text-align: left; 
+
+    line-height: 40px;
+    font-size: 20px;
+    list-style: circle;
+    font-weight: 200;
+    color: white;
+    text-align: left;
+    padding-left: 35px;
+    font-family: 'Anek Latin', sans-serif; 
+}
+/* #lang-l>h6{
+    line-height: 30px;
+    list-style: circle;
+    font-weight: 200;
+    color: white;
+    text-align: left;
+    padding-left: 35px;
+    font-family: 'Anek Latin', sans-serif;   
+} */
+
+
+#lang-r{
+    line-height: 40px;
+    float: right;
+    width: 50%;
+    /* background-color: rgb(149, 0, 255); */
+    text-align: left; 
+    height: 220px;
+}
+#circle-fill{
+    height: 16px;
+    width: 26px;
+    background-color: white;
+    border-radius: 50%;
+}
+
+
+
+#form-page{
+    color:black;
+    font-size: 21px;
+    padding-left: 150px;
+    padding-right: 150px;
+    font-weight: 500;
+
+}
+
+#form-page>fieldset>h2{
+    text-align: center;
+    background-color: #80aaef;
+}
+
+form{
+    width: 70%;
+    display: inline-block;
+    margin: 10px;
+}
+
+footer{
+    margin-top: 0%;
+    text-align: center;
+}
