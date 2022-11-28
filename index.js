@@ -129,7 +129,7 @@ connection.query(`Select * FROM employees WHERE ((Username = "${req.body.usernam
 // View Employees
 app.post("/all_emp", function(req, res){
   console.log("comingg here")
-connection.query(`Select Name, Designation FROM employees;`, function(err, rows){
+connection.query(`Select Name, Designation FROM employees;`, function(err, data){
       if(err){
         res.send("Error encountered while updating");
         return console.error(err.message);
@@ -140,7 +140,35 @@ connection.query(`Select Name, Designation FROM employees;`, function(err, rows)
       //   table += rows[count]
       // }
       
-      res.send(rows)
+      // var str = "<p> Ayooo </p>"
+
+      var str = '<table><tr>';
+      console.log("inside table1");
+      for (let i = 0; i < data.length; i++){
+        str += "<style> body {background-color: linen; margin: 70px 350px ;} h1 {color: maroon; font-size: 50px;}"
+        str += "p {color: MidnightBlue; font-size: 25px;} </style>";
+        str +='<tr>';
+
+        if (i == 0){
+          for (var row in data[i]){
+            str += '<td><label><h1> '+ row + '&emsp;&emsp;' + '<h1></label></td>';
+          }
+          str += "<tr></tr>";  
+        }
+
+        for (var row in data[i]){
+          console.log("inside table1", data[i][row]);
+  
+          // for (var col in data[i][row]){
+          str += '<td><label><p> | '+ data[i][row] + '&emsp;&emsp;' + '</p></label></td>';
+          console.log("inside table2");
+          // }
+        }
+        str += '</tr>';
+      }
+      str +='</table>';
+      res.send(str)
+
       console.log("All Employees printed successfully ");
     });
 });
@@ -150,14 +178,48 @@ connection.query(`Select Name, Designation FROM employees;`, function(err, rows)
 app.post("/all_items", function(req, res){
   // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
   console.log("comingg here")
-connection.query(`Select * FROM items;`, function(err, rows){
+connection.query(`Select * FROM items;`, function(err, data){
       if(err){
         res.send("Error encountered while updating");
         return console.error(err.message);
       }
 
-      res.send(rows)
-      console.log("All Employees printed successfully ");
+
+
+
+
+      /////////////////// PRINTING TABLE OF ITEMS ////////////////////////
+
+
+      var str = '<table><tr>';
+      console.log("inside table1");
+      for (let i = 0; i < data.length; i++){
+    
+        str += "<style>  body {background-color: tan; margin: 70px ;} h1 {color: Indigo; font-size: 35px;}"
+        str += "p {color: black; font-size: 17px;} </style>";
+        str +='<tr>';
+
+        if (i == 0){
+          for (var row in data[i]){
+            str += '<td><label><h1> '+ row + '&emsp;&emsp;' + '<h1></label></td>';
+          }
+          str += "<tr></tr>";  
+        }
+
+        for (var row in data[i]){
+          console.log("inside table1", data[i][row]);
+  
+          // for (var col in data[i][row]){
+          str += '<td><label><p> | '+ data[i][row] + '&emsp;&emsp;' + '</p></label></td>';
+          console.log("inside table2");
+          // }
+        }
+        str += '</tr>';
+      }
+      str +='</table>';
+      res.send(str)
+
+      console.log("All Items printed successfully ");
     });
 });
 
