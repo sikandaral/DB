@@ -99,7 +99,7 @@ connection.query(`Select * FROM customers WHERE ((Username = "${req.body.usernam
         res.send("Credentials not found");}
       else{
         console.log(rows);
-
+        
         var str = "<style> body {background-color: linen; margin: 70px 350px ;} h1 {color: maroon; font-size: 50px;}"
         str += "button {padding: 10px 50px; font-size: 40px; border: 1px solid #4D4AE8; border-radius: 1rem; box-sizing: border-box;} </style>";
         
@@ -116,7 +116,7 @@ connection.query(`Select * FROM customers WHERE ((Username = "${req.body.usernam
 app.post('/emp_login', function(req,res){
   
   console.log("yahaan agaya")
-connection.query(`Select * FROM employees WHERE ((Username = "${req.body.username}") and (Password =  "${req.body.password}"));`, function(err, rows){
+connection.query(`Select * FROM employees WHERE ((Username = "${req.body.username}") and (Password =  "${req.body.password}") and (Designation =  "${req.body.designation}"));`, function(err, rows){
       if(err){
         console.log(err.mess);
         res.send("Error encountered while updating");
@@ -128,13 +128,17 @@ connection.query(`Select * FROM employees WHERE ((Username = "${req.body.usernam
       else{
         console.log(rows);
         
+
         var str = "<style> body {background-color: linen; margin: 70px 350px ;} h1 {color: maroon; font-size: 50px;}"
         str += "button {padding: 10px 50px; font-size: 40px; border: 1px solid #4D4AE8; border-radius: 1rem; box-sizing: border-box;} </style>";
         
         str += "<h1> Employee successfully logged in!</h1> <br> <h2> Click the button below to continue:</h2><br><br>";
-        str += "<a href= \"https://www.google.com/\"><button> Click </button></a>";
+        str += "<a href= \"/templates/home.html\" ><button> Click </button></a>";
         
-        res.send(str);
+        // res.send(str);
+
+        res.sendFile(path.join(__dirname+"/templates/Manager.html"));
+
         console.log("Employee logged in successfully!");}
     });
 });
@@ -145,7 +149,7 @@ connection.query(`Select * FROM employees WHERE ((Username = "${req.body.usernam
 // View Employees
 app.post("/all_emp", function(req, res){
   console.log("comingg here")
-connection.query(`Select Name, Designation FROM employees;`, function(err, data){
+connection.query(`Select Name, Designation, Username FROM employees;`, function(err, data){
       if(err){
         res.send("Error encountered while updating");
         return console.error(err.message);
@@ -160,7 +164,7 @@ connection.query(`Select Name, Designation FROM employees;`, function(err, data)
 
       var str = '<table><tr>';
       for (let i = 0; i < data.length; i++){
-        str += "<style> body {background-color: linen; margin: 70px 350px ;} h1 {color: maroon; font-size: 50px;}"
+        str += "<style> body {background-color: linen; margin: 70px 150px ;} h1 {color: maroon; font-size: 50px;}"
         str += "p {color: MidnightBlue; font-size: 25px;} </style>";
         str +='<tr>';
 
@@ -237,6 +241,65 @@ connection.query(`Select * FROM items;`, function(err, data){
     });
 });
 
+
+
+//////////////////// MANAGER FUNCTIONS //////////////////
+
+///// REEMOVE EMPLOYEE ////////
+
+app.post('/remove_emp', (req,res)=>{
+  // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
+  // connection.serialize(()=>{
+    console.log("pohnch gaya")
+    // count +=1
+    
+    if (req.body.designation == "manager"){       // To see if a manager is not removed
+      res.send("<h2> Cannot remove a MANAGER! <br> Go back to previous page to perform other functions <h2>");
+    }
+
+
+    else{
+      connection.query(`DELETE FROM employees WHERE (Username = "${req.body.username}" and Designation = "${req.body.designation}");`, function(err, data){
+        if(err){
+          res.send("Error occured - form entries are incorrect");
+          return console.error(err.message);
+        }
+        if (data.affectedRows == 0){          // To see if employee exists
+          res.send("<h2> Employee doesn't exist! <br> Go back to previous page to do other functions <h2>");
+        }
+        else{
+          res.send("<h2> Employee removed successfully! <br> Go back to previous page to do other functions <h2>");
+          console.log("Employee removed successfully!");
+        }
+
+      });
+    }
+  // });
+});
+
+
+
+///// ADD EMPLOYEE ////////
+
+app.post('/add_emp', (req,res)=>{
+
+    console.log("pohnch gaya")
+  
+    if (req.body.designation == "manager"){
+      res.send("<h2> Cannot add a manager! <br> Go back to previous page to perform other functions <h2>");
+    }
+    else{
+      connection.query(`INSERT INTO employees VALUES ("${req.body.username}", "${req.body.name}", "${req.body.designation}", "${req.body.username}", "${req.body.password}");`, function(err, data){
+        if(err){
+          res.send("<h2> Error occured - Username already taken </h2>");
+          return console.error(err.message);
+        }
+        res.send("<h2> Employee added successfully! <br> Go back to previous page to perform other functions <h2>");
+        console.log("Employee added successfully!");
+    });
+    }
+  // });
+});
 
 
 

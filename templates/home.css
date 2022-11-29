@@ -63,7 +63,7 @@ a.navbar-link{
     padding: 0 0;
     margin-top: 0;
     background-color: rgb(191, 191, 238);
-    height: 1650px;
+    height: 1450px;
 }
 
 #toppart>div{
@@ -113,7 +113,7 @@ a.navbar-link{
 
 #top-right-col{
     background-color:rgba(4, 0, 37, 0.895);
-    height: 1650px;
+    height: 1450px;
     width: 30%;             /* was the picture part so given less space */
     text-align: center;     /* to align the picture in the centre   */
 }

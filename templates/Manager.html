@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name= "viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Inventory Website</title>
+    <link rel="icon" type="image/x-icon" href="store_image.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Staatliches&family=Teko&family=Titan+One&display=swap" rel="stylesheet">
+</head> 
+
+
+<style> 
+    body {
+        background-color: linen; 
+        margin: 10px 200px ;
+        background-image: "inventory_manager.png";
+        align-items: center;} 
+    h1 {
+        color: maroon; 
+        font-size: 50px;
+        padding: 10px 120px;
+        font-weight: 1500;}
+    p {
+        font-size: 50px;
+    }
+    #form-page{
+        color:black;
+        font-size: 21px;
+        padding-left: 50px;
+        padding-right: 150px;
+        font-weight: 500;
+    
+    }
+    #form-pageee{
+        color:black;
+        font-size: 21px;
+        padding-left: 50px;
+        padding-right: 150px;
+        font-weight: 500;
+    
+    }
+    
+    #form-page>fieldset>h2{
+        text-align: center;
+        background-color: #80aaef;
+    }
+    form{
+        width: 70%;
+        display: inline-block;
+        margin: 10px;
+    }
+    #navbar-div{                    /* It is for the specific box/part in the html file only*/    
+        display: flex;
+        justify-content: flex-end;  /* to move the words/text to the right */
+        column-gap: 20px;           /* to put gap b/w the words */
+        padding: 10px 0px;         /* first is top padding, second is right padding */
+        padding-right: 10px;
+        font-weight: 500;           /* adjusting the weight of the font */
+        
+        float: right;
+        width: 70%; 
+        height: auto;
+    }
+    
+
+</style>
+
+
+
+
+<body>
+    <div id="navbar-div">
+        <a class = "navbar-link" href= #form-page> View items/ employees</a>
+        <A class = "navbar-link" href= #form-pageee>Add/ Remove employee</a>
+    </div>
+    <br>
+
+    <h1> Welcome Manager Sahb!</h1>
+    <img src ="inventory_manager.png" width="770px" height="auto">
+
+    <div id = "form-page">
+        
+        <h3> Click the button below to view all items </h3>
+                
+        <form action="/all_items" method="post">
+            <input type = "Submit" value="View Items">
+        </form>
+        
+
+        <h3> Click the button below to view employees </h3>
+            
+        <form action="/all_emp" method="post">
+            <input type = "Submit" value="View Employees">
+        </form>
+
+    </div>
+
+    <br><br<br><br><br<br>
+    <div id = "form-pageee">
+        <fieldset>
+            <h2> Remove Employee </h2>
+            
+            <form action='/remove_emp' method="post">
+                
+                <label for="name">User Name:</label><br>
+                <input type="text" id="username" name="username"><br>
+                <label for="designation">Designation:</label><br>
+                <input type="input" id="designation" name="designation"><br><br>
+                <button type ="reset">Reset</button>
+                <input type="submit" value="Remove">
+                
+            </form>
+            <br><br>
+
+            <h2> Add Employee </h2>
+            
+            <form action="/add_emp" method="post">
+
+                <label for="name">First Name:</label>&emsp;
+                <input type="text" id="name" name="name"><br>
+
+                <label for="username">User name:</label>&emsp;
+                <input type="text" id="username" name="username"><br>
+                
+                <label for="password">Password:</label>&emsp;&nbsp;&nbsp;
+                <input type="text" id="password" name="password"><br>
+
+                <label for="designation">Designation:</label>&nbsp;&nbsp;
+                <input type="text" id="designation" name="designation"><br><br>
+
+                <button type ="reset">Reset</button>
+                <input type="submit" value="Submit">
+                
+            </form>
+        </fieldset>
+
+    </div>
+
+
+
+</body>
+
+</html>
