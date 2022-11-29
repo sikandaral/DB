@@ -78,7 +78,7 @@ app.post('/cust_signup', (req,res)=>{
         res.send("Error occured - form entries are incorrect");
         return console.error(err.message);
       }
-      res.send("Customer signed up successfully");
+      res.send("<h2> Customer signed up successfully! <br> Go back to previous page and log in. <h2>");
       console.log("Customer signed up successfully");
     });
   // });
@@ -99,7 +99,14 @@ connection.query(`Select * FROM customers WHERE ((Username = "${req.body.usernam
         res.send("Credentials not found");}
       else{
         console.log(rows);
-        res.send("Customers logged in successfully");
+
+        var str = "<style> body {background-color: linen; margin: 70px 350px ;} h1 {color: maroon; font-size: 50px;}"
+        str += "button {padding: 10px 50px; font-size: 40px; border: 1px solid #4D4AE8; border-radius: 1rem; box-sizing: border-box;} </style>";
+        
+        str += "<h1> Customer successfully logged in!</h1> <br> <h2> Click the button below to continue:</h2><br><br>";
+        str += "<a href= \"https://www.google.com/\"><button> Click </button></a>";
+        
+        res.send(str);
         console.log("Customers logged in successfully");}
     });
 });
@@ -107,9 +114,11 @@ connection.query(`Select * FROM customers WHERE ((Username = "${req.body.usernam
 
 // Employee Log In
 app.post('/emp_login', function(req,res){
-
+  
+  console.log("yahaan agaya")
 connection.query(`Select * FROM employees WHERE ((Username = "${req.body.username}") and (Password =  "${req.body.password}"));`, function(err, rows){
       if(err){
+        console.log(err.mess);
         res.send("Error encountered while updating");
         return console.error(err.message);
       }
@@ -118,8 +127,15 @@ connection.query(`Select * FROM employees WHERE ((Username = "${req.body.usernam
         res.send("Credentials not found");}
       else{
         console.log(rows);
-        res.send("Employee logged in successfully");
-        console.log("Employee logged in successfully");}
+        
+        var str = "<style> body {background-color: linen; margin: 70px 350px ;} h1 {color: maroon; font-size: 50px;}"
+        str += "button {padding: 10px 50px; font-size: 40px; border: 1px solid #4D4AE8; border-radius: 1rem; box-sizing: border-box;} </style>";
+        
+        str += "<h1> Employee successfully logged in!</h1> <br> <h2> Click the button below to continue:</h2><br><br>";
+        str += "<a href= \"https://www.google.com/\"><button> Click </button></a>";
+        
+        res.send(str);
+        console.log("Employee logged in successfully!");}
     });
 });
 
@@ -143,7 +159,6 @@ connection.query(`Select Name, Designation FROM employees;`, function(err, data)
       // var str = "<p> Ayooo </p>"
 
       var str = '<table><tr>';
-      console.log("inside table1");
       for (let i = 0; i < data.length; i++){
         str += "<style> body {background-color: linen; margin: 70px 350px ;} h1 {color: maroon; font-size: 50px;}"
         str += "p {color: MidnightBlue; font-size: 25px;} </style>";
@@ -161,7 +176,7 @@ connection.query(`Select Name, Designation FROM employees;`, function(err, data)
   
           // for (var col in data[i][row]){
           str += '<td><label><p> | '+ data[i][row] + '&emsp;&emsp;' + '</p></label></td>';
-          console.log("inside table2");
+          // console.log("inside table2");
           // }
         }
         str += '</tr>';
@@ -192,7 +207,6 @@ connection.query(`Select * FROM items;`, function(err, data){
 
 
       var str = '<table><tr>';
-      console.log("inside table1");
       for (let i = 0; i < data.length; i++){
     
         str += "<style>  body {background-color: tan; margin: 70px ;} h1 {color: Indigo; font-size: 35px;}"
@@ -211,7 +225,7 @@ connection.query(`Select * FROM items;`, function(err, data){
   
           // for (var col in data[i][row]){
           str += '<td><label><p> | '+ data[i][row] + '&emsp;&emsp;' + '</p></label></td>';
-          console.log("inside table2");
+          // console.log("inside table2");
           // }
         }
         str += '</tr>';
