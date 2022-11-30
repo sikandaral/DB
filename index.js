@@ -437,6 +437,109 @@ app.post("/remove_item", function (req, res) {
   });
 });
 
+app.post("/view_cart", function (req, res) {
+  // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
+  connection.query(`Select * FROM cart WHERE (C_Custkey = "${cust_key}");`, function (err, data) {
+    if (err) {
+      res.send("Error encountered while searching");
+      return console.error(err.message);
+    }
+
+    var str = '<table><tr>';
+    for (let i = 0; i < data.length; i++) {
+      str += "<style> body {background-color: linen; margin: 70px 150px ;} h1 {color: maroon; font-size: 50px;}"
+      str += "p {color: MidnightBlue; font-size: 25px;} </style>";
+      str += '<tr>';
+
+      if (i == 0) {
+        for (var row in data[i]) {
+          str += '<td><label><h1> ' + row + '&emsp;&emsp;' + '<h1></label></td>';
+        }
+        str += "<tr></tr>";
+      }
+
+      for (var row in data[i]) {
+        console.log("inside table1", data[i][row]);
+
+        // for (var col in data[i][row]){
+        str += '<td><label><p> | ' + data[i][row] + '&emsp;&emsp;' + '</p></label></td>';
+        // console.log("inside table2");
+        // }
+      }
+      str += '</tr>';
+    }
+    str += '</table>';
+    res.send(str)
+
+    //res.send(data);
+    console.log("Cart shown successfully" + cust_key);
+  });
+});
+
+
+app.post("/view_orders", function (req, res) {
+  // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
+  connection.query(`Select * FROM project.order WHERE (O_Orderkey = (SELECT Orderkey FROM ordersupp WHERE OS_Custkey = "${cust_key}"));`, function (err, data) {
+    if (err) {
+      res.send("Error encountered while searching");
+      return console.error(err.message);
+    }
+
+    var str = '<table><tr>';
+    for (let i = 0; i < data.length; i++) {
+      str += "<style> body {background-color: linen; margin: 70px 150px ;} h1 {color: maroon; font-size: 50px;}"
+      str += "p {color: MidnightBlue; font-size: 25px;} </style>";
+      str += '<tr>';
+
+      if (i == 0) {
+        for (var row in data[i]) {
+          str += '<td><label><h1> ' + row + '&emsp;&emsp;' + '<h1></label></td>';
+        }
+        str += "<tr></tr>";
+      }
+
+      for (var row in data[i]) {
+        console.log("inside table1", data[i][row]);
+
+        // for (var col in data[i][row]){
+        str += '<td><label><p> | ' + data[i][row] + '&emsp;&emsp;' + '</p></label></td>';
+        // console.log("inside table2");
+        // }
+      }
+      str += '</tr>';
+    }
+    str += '</table>';
+    res.send(str)
+
+    // res.send(data);
+    console.log("Orders shown successfully" + cust_key);
+  });
+});
+
+// Cancel Order
+
+app.post("/cancel_order", function (req, res) {
+  // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
+  connection.query(`DELETE FROM project.order WHERE(O_Orderkey = (SELECT Orderkey from ordersupp WHERE(OS_Custkey = "${cust_key}" AND Orderkey = "${req.body.cancelorder}"  AND (Status != "Completed" OR Status != "Delivering"))));`, function (err, rows) {
+    if (err) {
+      res.send("Error encountered while searching");
+      return console.error(err.message);
+    }
+
+    //res.send(rows);
+    console.log("Cart shown successfully" + cust_key);
+  });
+  connection.query(`DELETE FROM project.ordersupp WHERE (OS_Custkey = "${cust_key}" AND Orderkey = "${req.body.cancelorder}"  AND (Status != "Completed" OR Status != "Delivering"));`, function (err, rows) {
+    if (err) {
+      res.send("Error encountered while searching");
+      return console.error(err.message);
+    }
+
+    res.send("Order " + req.body.cancelorder + "has been cancelled. ;-;");
+    console.log("Cart shown successfully" + cust_key);
+  });
+})
+
 let port = 3030;
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
