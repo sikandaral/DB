@@ -311,6 +311,68 @@ app.post("/add_emp", (req, res) => {
   // });
 });
 
+///// CUSTOMER USE CASES /////
+//search item:
+app.post("/cust_search", function (req, res) {
+  // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
+  connection.query(`Select * FROM items WHERE (Name LIKE "%${req.body.search}%" OR Name = "${req.body.search}");`, function (err, data) {
+    if (err) {
+      res.send("Error encountered while searching");
+      return console.error(err.message);
+    }
+
+    var str = '<table><tr>';
+    for (let i = 0; i < data.length; i++) {
+      str += "<style> body {background-color: linen; margin: 70px 150px ;} h1 {color: maroon; font-size: 50px;}"
+      str += "p {color: MidnightBlue; font-size: 25px;} </style>";
+      str += '<tr>';
+
+      if (i == 0) {
+        for (var row in data[i]) {
+          str += '<td><label><h1> ' + row + '&emsp;&emsp;' + '<h1></label></td>';
+        }
+        str += "<tr></tr>";
+      }
+
+      for (var row in data[i]) {
+        console.log("inside table1", data[i][row]);
+
+        // for (var col in data[i][row]){
+        str += '<td><label><p> | ' + data[i][row] + '&emsp;&emsp;' + '</p></label></td>';
+        // console.log("inside table2");
+        // }
+      }
+      str += '</tr>';
+    }
+    str += '</table>';
+    res.send(str)
+
+    console.log("All search items printed successfully ");
+
+    // res.send(rows);
+    // console.log("Items shown successfully" + cust_key);
+  });
+});
+
+//add item to cart:
+app.post("/select_item", function (req, res) {
+  connection.query(`insert into cart (C_Custkey, C_Itemkey, Quantity) 
+  Select "${cust_key}", (select Item_key from items where Name = "${req.body.addtocart}" ), ${req.body.cartquantity} 
+  where (select Quantity from storage where S_itemkey = (select Item_key from items where Name = "${req.body.addtocart}" )) - ${req.body.cartquantity} > 0 ;`, function (err, rows) {
+    if (err) {
+      res.send("Error encountered while adding to cart" + cust_key);
+      console.log(req.body.addtocart + " " + req.body.cartquantity)
+      return console.error(err.message);
+    }
+    if (rows.affectedRows == 0) {
+      res.send("Invalid")
+    } else {
+      res.send("Added " + req.body.cartquantity + " " + req.body.addtocart + " successfully");
+    }
+
+    console.log("Added to cart " + cust_key);
+  });
+});
 
 let port = 3030;
 app.listen(port, () => {
