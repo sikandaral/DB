@@ -12,6 +12,11 @@ import { fileURLToPath } from "url";
 // var url = require('url');
 // var fileURLToPath = require( 'fileURLToPath');
 
+
+
+
+
+
 // count = 0
 ////////////// Creating Connection with MySQL ////////////////
 
@@ -35,6 +40,12 @@ connection.connect(function (err) {
   });
 });
 
+
+
+
+
+
+
 ////////////////////////////////////////
 
 // var m = require('meta')
@@ -57,7 +68,14 @@ app.get("/", (req, res) => {
 
 app.use(express.static(__dirname + "/templates"));
 
-// Customer Sign up
+
+
+
+
+
+
+/////////////// Customer Sign up //////////////////////////
+
 app.post("/cust_signup", (req, res) => {
   // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
   // connection.serialize(()=>{
@@ -79,7 +97,12 @@ app.post("/cust_signup", (req, res) => {
   // });
 });
 
-// Customer Log In
+
+
+
+
+
+/////////////////// Customer Log In /////////////////////////
 var cust_key;
 app.post("/cust_login", (req, res) => {
   // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
@@ -105,7 +128,13 @@ app.post("/cust_login", (req, res) => {
   );
 });
 
-// Employee Log In
+
+
+
+
+
+
+//////////////////// Employee Log In ////////////////////////////////
 app.post("/emp_login", function (req, res) {
   console.log("yahaan agaya");
   connection.query(
@@ -133,7 +162,13 @@ app.post("/emp_login", function (req, res) {
 
         // res.send(str);
 
-        res.sendFile(path.join(__dirname + "/templates/Manager.html"));
+        if (req.body.designation == "manager"){
+          res.sendFile(path.join(__dirname + "/templates/Manager.html"));}
+        
+        if (req.body.designation == "restocker"){
+          res.sendFile(path.join(__dirname + "/templates/Restocker.html"));}
+          
+
 
         console.log("Employee logged in successfully!");
       }
@@ -141,7 +176,9 @@ app.post("/emp_login", function (req, res) {
   );
 });
 
-// View Employees
+
+
+///////////////// View Employees //////////////////////
 app.post("/all_emp", function (req, res) {
   console.log("comingg here");
   connection.query(
@@ -284,7 +321,11 @@ app.post("/remove_emp", (req, res) => {
   // });
 });
 
-///// ADD EMPLOYEE ////////
+
+
+
+
+//////////////// ADD EMPLOYEE /////////////////////////
 
 app.post("/add_emp", (req, res) => {
   console.log("pohnch gaya");
@@ -311,7 +352,10 @@ app.post("/add_emp", (req, res) => {
   // });
 });
 
-///// CUSTOMER USE CASES /////
+
+
+
+//////////////////// CUSTOMER USE CASES /////////////////////
 //search item:
 app.post("/cust_search", function (req, res) {
   // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
@@ -396,4 +440,70 @@ app.post("/remove_item", function (req, res) {
 let port = 3030;
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
+});
+
+
+
+
+////////////////  RESTICKER FUNCTIONS //////////////////////
+
+// View Items
+app.post("/restock_view_item", function(req, res){
+  // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
+  console.log("comingg here")
+connection.query(`Select S_Itemkey,Quantity,Min_amount FROM storage Where storage.Quantity<storage.Min_amount;`, function(err, data){
+      if(err){
+        res.send("Error encountered while updating");
+        return console.error(err.message);
+      }
+
+
+      var str = '<table><tr>';
+      for (let i = 0; i < data.length; i++){
+    
+        str += "<style>  body {background-color: tan; margin: 70px ;} h1 {color: Indigo; font-size: 35px;}"
+        str += "p {color: black; font-size: 17px;} </style>";
+        str +='<tr>';
+
+        if (i == 0){
+          for (var row in data[i]){
+            str += '<td><label><h1> '+ row + '&emsp;&emsp;' + '<h1></label></td>';
+          }
+          str += "<tr></tr>";  
+        }
+
+        for (var row in data[i]){
+          console.log("inside table1", data[i][row]);
+  
+          // for (var col in data[i][row]){
+          str += '<td><label><p> | '+ data[i][row] + '&emsp;&emsp;' + '</p></label></td>';
+          // console.log("inside table2");
+          // }
+        }
+        str += '</tr>';
+      }
+      str +='</table>';
+      res.send(str)
+
+      console.log("All Items printed successfully ");
+    });
+});
+
+
+///// Place Order ////////
+
+app.post('/place_ord', (req,res)=>{
+
+  console.log("pohnch gaya2")
+  connection.query(`Update storage Set Quantity = Quantity + ${req.body.quantity}  Where S_Itemkey = ${req.body.itemID};`, function(err, data){
+  //connection.query(`If Exists (Select S_Itemkey From storage where S_Itemkey = ${req.body.itemID}) Update storage Set Quantity = Quantity + ${req.body.quantity}  Where S_Itemkey = ${req.body.itemID} If Exists (Select * From storage Where S_Itemkey = ${req.body.itemID});`, function(err, data){
+    if(err){
+      res.send("<h2> Error occured - Invalid Input </h2>");
+      return console.error(err.message);
+    }
+    console.log(data)
+    res.send("<h2> Item Ordered Successfully! <br> Go back to previous page to perform other functions <h2>");
+    console.log("Item Ordered Successfully!");
+  });
+// });
 });

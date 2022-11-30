@@ -67,6 +67,11 @@ app.get('/', (req, res) => {
 
 app.use(express.static(__dirname +'/templates'));
 
+
+
+
+
+
 // View Items
 app.post("/view_item", function(req, res){
   // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
