@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Page Title</title>
+    <link rel="stylesheet" type="text/css" href="style.css"/>
+</head>
+<body background="image.jpg">
+    <div class="center">
+        <p>STORE INVENTORY MANAGEMENT</p>
+    </div><br>
+    <div class="center2">
+        <p>RESTOCKER SECTION</p>
+    </div><br>
+    <div class = "form-page">
+        <h3> Click the button below to view items low in quantity </h3>     
+        <form action="/view_item" method="post">
+            <input type = "Submit" value="View Items">
+        </form>
+        <br>
+    <div class="Order">
+        <fieldset>
+        <h2> Order Placement </h2>
+        <form action="/place_ord" method="post">
+            <label for="itemID">Item ID:</label><br>
+            <input type="text" id="itemID" name="itemID"><br>
+            <label for="quantity">Quantity to Add:</label><br>
+            <input type="text" id="quantity" name="quantity"><br><br>
+            <input type="submit" value="PLACE ORDER">
+        </form>
+        </fieldset>
+    </div>
+</body>
+</html>
