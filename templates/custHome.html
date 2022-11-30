@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>replit</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <div className="cust_main_header" id="home">
+        <div className="cust_main__header-content">
+            <h1 className="gradient__text">CUSTOMER HOME</h1>
+        </div>
+    </div>
+
+    </div>
+
+    <!-- Load icon library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- The form -->
+    <form action="/cust_search" method="post">
+        <input type="text" placeholder="Search.." name="search" id="search">
+        <button type="submit"><i class="fa fa-search"></i></button>
+    </form>
+
+    <br>
+    <form action="/select_item" method="post">
+        <input type="text" placeholder="Item Name" name="addtocart" id="addtocart">
+        <br>
+        <input type="number" placeholder="Quantity" name="cartquantity" id="cartquantity">
+        <button type="submit">Add to cart</button>
+    </form>
+
+    <br>
+    <form action="/remove_item" method="post">
+        <input type="text" placeholder="Item Name" name="removefromcart" id="removefromcart">
+        <button type="submit">Remove from cart</button>
+    </form>
+
+    <br>
+    <form action="/view_cart" method="post">
+        <button>View Cart <i class="fa fa-shopping-cart"></i></button>
+    </form>
+
+    <br>
+    <form action="/view_orders" method="post">
+        <button>View Orders <i class="fa fa-shopping-cart"></i></button>
+    </form>
+
+
+
+
+    <!--
+  This script places a badge on your repl's full-browser view back to your repl's cover
+  page. Try various colors for the theme: dark, light, red, orange, yellow, lime, green,
+  teal, blue, blurple, magenta, pink!
+  -->
+    <script src="https://replit.com/public/js/replit-badge.js" theme="dark" defer></script>
+</body>
+
+</html>
