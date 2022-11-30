@@ -374,6 +374,27 @@ app.post("/select_item", function (req, res) {
   });
 });
 
+//add item to cart:
+app.post("/select_item", function (req, res) {
+  // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
+  connection.query(`insert into cart (C_Custkey, C_Itemkey, Quantity) 
+  Select "${cust_key}", (select Item_key from items where Name = "${req.body.addtocart}" ), ${req.body.cartquantity} 
+  where (select Quantity from storage where S_itemkey = (select Item_key from items where Name = "${req.body.addtocart}" )) - ${req.body.cartquantity} > 0 ;`, function (err, rows) {
+    if (err) {
+      res.send("Error encountered while adding to cart" + cust_key);
+      console.log(req.body.addtocart + " " + req.body.cartquantity)
+      return console.error(err.message);
+    }
+    if (rows.affectedRows == 0) {
+      res.send("Invalid")
+    } else {
+      res.send("Added " + req.body.cartquantity + " " + req.body.addtocart + " successfully");
+    }
+
+    console.log("Added to cart " + cust_key);
+  });
+});
+
 let port = 3030;
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
