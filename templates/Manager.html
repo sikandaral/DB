@@ -54,14 +54,14 @@
     }
     #navbar-div{                    /* It is for the specific box/part in the html file only*/    
         display: flex;
-        justify-content: flex-end;  /* to move the words/text to the right */
+        justify-content: flex;  /* to move the words/text to the right */
         column-gap: 20px;           /* to put gap b/w the words */
         padding: 10px 0px;         /* first is top padding, second is right padding */
-        padding-right: 10px;
+        padding-right: 0px;
         font-weight: 500;           /* adjusting the weight of the font */
         
         float: right;
-        width: 70%; 
+        width: 50%; 
         height: auto;
     }
     
@@ -72,10 +72,18 @@
 
 
 <body>
+
     <div id="navbar-div">
         <a class = "navbar-link" href= #form-page> View items/ employees</a>
         <A class = "navbar-link" href= #form-pageee>Add/ Remove employee</a>
+        <form action = "/logout" method="post">
+            <input type="submit" value="Logout">
+        </form>
     </div>
+
+
+
+    <br>
     <br>
 
     <h1> Welcome Manager Sahb!</h1>

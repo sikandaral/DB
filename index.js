@@ -27,6 +27,7 @@ var connection = mysql.createConnection({
   password: "dbGroup13",
 });
 
+
 connection.connect(function (err) {
   if (err) {
     console.error("Error connecting: " + err.stack);
@@ -138,7 +139,7 @@ app.post("/cust_login", (req, res) => {
 app.post("/emp_login", function (req, res) {
   console.log("yahaan agaya");
   connection.query(
-    `Select * FROM employees WHERE ((Username = "${req.body.username}") and (Password =  "${req.body.password}") and (Designation =  "${req.body.designation}"));`,
+    `Select Designation FROM employees WHERE ((Username = "${req.body.username}") and (Password =  "${req.body.password}"));`,
     function (err, rows) {
       if (err) {
         console.log(err.mess);
@@ -162,10 +163,10 @@ app.post("/emp_login", function (req, res) {
 
         // res.send(str);
 
-        if (req.body.designation == "manager"){
+        if (rows[0]["Designation"] == "manager"){
           res.sendFile(path.join(__dirname + "/templates/Manager.html"));}
         
-        if (req.body.designation == "restocker"){
+        if (rows[0]["Designation"] == "restocker"){
           res.sendFile(path.join(__dirname + "/templates/Restocker.html"));}
           
 
@@ -609,4 +610,29 @@ app.post('/place_ord', (req,res)=>{
     console.log("Item Ordered Successfully!");
   });
 // });
+});
+
+
+
+
+///////////////////////////////////////////////////
+
+////// Logout /////////////
+
+var cust_key;
+app.post("/logout", (req, res) => {
+  // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
+  connection.query(
+    `Select * FROM customers;`,
+    function (err) {
+      if (err) {
+        res.send("Error encountered while logging in");
+        return console.error(err.message);
+      }
+      {
+        console.log("Logged out successfully");
+      }
+      res.sendFile(path.join(__dirname + "/templates/home.html"));
+    }
+  );
 });

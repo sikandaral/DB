@@ -4,7 +4,29 @@
     <title>Page Title</title>
     <link rel="stylesheet" type="text/css" href="style.css"/>
 </head>
+
+<style>
+    #navbar-div{
+        font-size: 20px;
+        justify-content: flex;
+        background-color: orange;
+    }
+    form{
+        width: 70%;
+        font-size: 20px;
+        display: inline-block;
+        color: orange;
+        margin: 10px;
+    }
+</style>
+
 <body background="image.jpg">
+    <div id="navbar-div">
+        <form action = "/logout" method="post">
+            <input type="submit" value="Logout">
+        </form>
+    </div>
+
     <div class="center">
         <p>STORE INVENTORY MANAGEMENT</p>
     </div><br>

@@ -8,7 +8,27 @@
     <link href="style.css" rel="stylesheet" type="text/css" />
 </head>
 
+<style>
+    #navbar-div{
+        font-size: 20px;
+        justify-content: flex;
+        background-color: orange;
+    }
+    form{
+        width: 70%;
+        font-size: 20px;
+        display: inline-block;
+        color: orange;
+        margin: 10px;
+    }
+</style>
+
 <body>
+    <div id="navbar-div">
+        <form action = "/logout" method="post">
+            <input type="submit" value="Logout">
+        </form>
+    </div>
     <div className="cust_main_header" id="home">
         <div className="cust_main__header-content">
             <h1 className="gradient__text">CUSTOMER HOME</h1>
