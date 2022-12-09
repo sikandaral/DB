@@ -25,6 +25,7 @@ var connection = mysql.createConnection({
   database: "project",
   user: "abdullah42@dbgroup13",
   password: "dbGroup13",
+  multipleStatements: true
 });
 
 
@@ -514,6 +515,58 @@ app.post("/view_orders", function (req, res) {
 
     // res.send(data);
     console.log("Orders shown successfully" + cust_key);
+  });
+});
+
+//Place Order
+
+
+app.post("/cust_place_order", function (req, res) {
+  // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
+  connection.query(`INSERT INTO ordersupp(Orderkey, OS_Custkey, Date, Status)
+  SELECT coalesce(MAX((SELECT Orderkey FROM ordersupp)), 0) + 1, "${cust_key}", NOW(), "placed";
+  SELECT 1 FROM cart WHERE C_Custkey = "${cust_key}";`,[0,1], function (err, rows) {
+    if (err) {
+      res.send("error encountered while placing order");
+      return console.error(err.message);
+    }
+
+    //res.send(rows);
+    console.log("Order started successfully");
+    if(rows[1].length == 0){
+      connection.query(`DELETE FROM ordersupp WHERE Orderkey = (SELECT MAX(Orderkey) FROM ordersupp);`, function (err, rows) {
+        if (err) {
+          res.send("error encountered while placing order");
+          return console.error(err.message);
+        }
+        res.send("No items in cart! Select items into cart to place order.");
+        return;
+      });
+      
+      
+    }
+
+    for(let i = 0; i < rows[1].length; i++){
+
+      connection.query(`INSERT INTO project.order(O_Orderkey, O_Itemkey, Quantity) 
+      SELECT (SELECT Max(Orderkey) FROM ordersupp), 
+             (SELECT C_Itemkey FROM cart WHERE(C_Custkey = "${cust_key}") LIMIT 1),
+             (SELECT Quantity FROM cart WHERE(C_Custkey = "${cust_key}") LIMIT 1);`, function (err, rows) {
+        if (err) {
+          res.send("error encountered while placing order");
+          return console.error(err.message);
+        }
+      });
+      connection.query(`DELETE FROM cart where C_Custkey = "${cust_key}" LIMIT 1;`, function (err, rows) {
+        if (err) {
+          res.send("error encountered while placing order");
+          return console.error(err.message);
+        }
+      });
+
+
+    }
+    res.send("Order placed!");
   });
 });
 
