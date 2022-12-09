@@ -574,23 +574,27 @@ app.post("/cust_place_order", function (req, res) {
 
 app.post("/cancel_order", function (req, res) {
   // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
-  connection.query(`DELETE FROM project.order WHERE(O_Orderkey = (SELECT Orderkey from ordersupp WHERE(OS_Custkey = "${cust_key}" AND Orderkey = "${req.body.cancelorder}"  AND (Status != "Completed" OR Status != "Delivering"))));`, function (err, rows) {
+  connection.query(`UPDATE project.order
+                    SET Status = "Cancelled"
+                    WHERE(O_Orderkey = (SELECT Orderkey from ordersupp WHERE(OS_Custkey = "${cust_key}" AND Orderkey = "${req.body.cancelorder}"  AND (Status != "Completed" OR Status != "Delivering"))));`, function (err, rows) {
     if (err) {
       res.send("Error encountered while searching");
       return console.error(err.message);
     }
 
     //res.send(rows);
-    console.log("Cart shown successfully" + cust_key);
+    console.log("half done cancelling " + cust_key);
   });
-  connection.query(`DELETE FROM project.ordersupp WHERE (OS_Custkey = "${cust_key}" AND Orderkey = "${req.body.cancelorder}"  AND (Status != "Completed" OR Status != "Delivering"));`, function (err, rows) {
+  connection.query(`UPDATE project.ordersupp 
+                    SET Status = "Cancelled"
+                    WHERE (OS_Custkey = "${cust_key}" AND Orderkey = "${req.body.cancelorder}"  AND (Status != "Completed" OR Status != "Delivering"));`, function (err, rows) {
     if (err) {
       res.send("Error encountered while searching");
       return console.error(err.message);
     }
 
-    res.send("Order " + req.body.cancelorder + "has been cancelled. ;-;");
-    console.log("Cart shown successfully" + cust_key);
+    res.send("Order " + req.body.cancelorder + "has been cancelled");
+    console.log("order cancelled succesfully " + cust_key);
   });
 })
 
@@ -664,9 +668,6 @@ app.post('/place_ord', (req,res)=>{
   });
 // });
 });
-
-
-
 
 ///////////////////////////////////////////////////
 
