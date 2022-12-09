@@ -9,6 +9,7 @@ import mysql from "mysql";
 import path from "path";
 // var path = require('path');
 import { fileURLToPath } from "url";
+import bcrypt from "bcrypt";
 // var url = require('url');
 // var fileURLToPath = require( 'fileURLToPath');
 
@@ -81,10 +82,13 @@ app.use(express.static(__dirname + "/templates"));
 app.post("/cust_signup", (req, res) => {
   // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
   // connection.serialize(()=>{
-  console.log("pohnch gaya");
-  // count +=1
+
+  var password = req.body.password
+  var hash = bcrypt.hashSync(password, 10);
+
+  // console.log("pohnch gaya", hash, password);
   connection.query(
-    `INSERT INTO customers (Custkey, Name, Username, Password, Address, Contact) VALUES("${req.body.username}", "${req.body.name}", "${req.body.username}", "${req.body.password}", "${req.body.address}", ${req.body.contact});`,
+    `INSERT INTO customers (Custkey, Name, Username, Password, Address, Contact) VALUES("${req.body.username}", "${req.body.name}", "${req.body.username}", "${hash}", "${req.body.address}", ${req.body.contact});`,
     function (err) {
       if (err) {
         res.send("Error occured - form entries are incorrect");
@@ -93,23 +97,23 @@ app.post("/cust_signup", (req, res) => {
       res.send(
         "<h2> Customer signed up successfully! <br> Go back to previous page and log in. <h2>"
       );
-      console.log("Customer signed up successfully");
-    }
-  );
-  // });
+      console.log("Customer signed up successfully", hash);
+
+    });
+
+
+
 });
-
-
-
-
 
 
 /////////////////// Customer Log In /////////////////////////
 var cust_key;
 app.post("/cust_login", (req, res) => {
   // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
+  var password = req.body.password
+
   connection.query(
-    `Select * FROM customers WHERE ((Username = "${req.body.username}") and (Password =  "${req.body.password}"));`,
+    `Select Password FROM customers WHERE ((Username = "${req.body.username}"));`,
     function (err, rows) {
       if (err) {
         res.send("Error encountered while logging in");
@@ -119,22 +123,22 @@ app.post("/cust_login", (req, res) => {
         console.log(rows);
         res.send("Credentials not found");
       } else {
-        cust_key = req.body.username;
-        console.log(rows);
-
+        // console.log("sdf", rows[0].Password);
+        const isValid = bcrypt.compareSync(password, rows[0].Password)
         //res.send("Customers logged in successfully");
-        console.log("Customers logged in successfully");
+        // console.log("Password valid: ", isValid);
+        if (isValid) {
+          cust_key = req.body.username;
+        } else {
+          res.send("Incorrect Password");
+        }
+
       }
       res.sendFile(path.join(__dirname + "/templates/custHome.html"));
     }
   );
+
 });
-
-
-
-
-
-
 
 //////////////////// Employee Log In ////////////////////////////////
 app.post("/emp_login", function (req, res) {
@@ -164,12 +168,14 @@ app.post("/emp_login", function (req, res) {
 
         // res.send(str);
 
-        if (rows[0]["Designation"] == "manager"){
-          res.sendFile(path.join(__dirname + "/templates/Manager.html"));}
-        
-        if (rows[0]["Designation"] == "restocker"){
-          res.sendFile(path.join(__dirname + "/templates/Restocker.html"));}
-          
+        if (rows[0]["Designation"] == "manager") {
+          res.sendFile(path.join(__dirname + "/templates/Manager.html"));
+        }
+
+        if (rows[0]["Designation"] == "restocker") {
+          res.sendFile(path.join(__dirname + "/templates/Restocker.html"));
+        }
+
 
 
         console.log("Employee logged in successfully!");
@@ -525,7 +531,7 @@ app.post("/cust_place_order", function (req, res) {
   // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
   connection.query(`INSERT INTO ordersupp(Orderkey, OS_Custkey, Date, Status)
   SELECT coalesce(MAX((SELECT Orderkey FROM ordersupp)), 0) + 1, "${cust_key}", NOW(), "placed";
-  SELECT 1 FROM cart WHERE C_Custkey = "${cust_key}";`,[0,1], function (err, rows) {
+  SELECT 1 FROM cart WHERE C_Custkey = "${cust_key}";`, [0, 1], function (err, rows) {
     if (err) {
       res.send("error encountered while placing order");
       return console.error(err.message);
@@ -533,7 +539,7 @@ app.post("/cust_place_order", function (req, res) {
 
     //res.send(rows);
     console.log("Order started successfully");
-    if(rows[1].length == 0){
+    if (rows[1].length == 0) {
       connection.query(`DELETE FROM ordersupp WHERE Orderkey = (SELECT MAX(Orderkey) FROM ordersupp);`, function (err, rows) {
         if (err) {
           res.send("error encountered while placing order");
@@ -542,11 +548,11 @@ app.post("/cust_place_order", function (req, res) {
         res.send("No items in cart! Select items into cart to place order.");
         return;
       });
-      
-      
+
+
     }
 
-    for(let i = 0; i < rows[1].length; i++){
+    for (let i = 0; i < rows[1].length; i++) {
 
       connection.query(`INSERT INTO project.order(O_Orderkey, O_Itemkey, Quantity) 
       SELECT (SELECT Max(Orderkey) FROM ordersupp), 
@@ -609,56 +615,56 @@ app.listen(port, () => {
 ////////////////  RESTICKER FUNCTIONS //////////////////////
 
 // View Items
-app.post("/restock_view_item", function(req, res){
+app.post("/restock_view_item", function (req, res) {
   // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
   console.log("comingg here")
-connection.query(`Select S_Itemkey,Quantity,Min_amount FROM storage Where storage.Quantity<storage.Min_amount;`, function(err, data){
-      if(err){
-        res.send("Error encountered while updating");
-        return console.error(err.message);
+  connection.query(`Select S_Itemkey,Quantity,Min_amount FROM storage Where storage.Quantity<storage.Min_amount;`, function (err, data) {
+    if (err) {
+      res.send("Error encountered while updating");
+      return console.error(err.message);
+    }
+
+
+    var str = '<table><tr>';
+    for (let i = 0; i < data.length; i++) {
+
+      str += "<style>  body {background-color: tan; margin: 70px ;} h1 {color: Indigo; font-size: 35px;}"
+      str += "p {color: black; font-size: 17px;} </style>";
+      str += '<tr>';
+
+      if (i == 0) {
+        for (var row in data[i]) {
+          str += '<td><label><h1> ' + row + '&emsp;&emsp;' + '<h1></label></td>';
+        }
+        str += "<tr></tr>";
       }
 
+      for (var row in data[i]) {
+        console.log("inside table1", data[i][row]);
 
-      var str = '<table><tr>';
-      for (let i = 0; i < data.length; i++){
-    
-        str += "<style>  body {background-color: tan; margin: 70px ;} h1 {color: Indigo; font-size: 35px;}"
-        str += "p {color: black; font-size: 17px;} </style>";
-        str +='<tr>';
-
-        if (i == 0){
-          for (var row in data[i]){
-            str += '<td><label><h1> '+ row + '&emsp;&emsp;' + '<h1></label></td>';
-          }
-          str += "<tr></tr>";  
-        }
-
-        for (var row in data[i]){
-          console.log("inside table1", data[i][row]);
-  
-          // for (var col in data[i][row]){
-          str += '<td><label><p> | '+ data[i][row] + '&emsp;&emsp;' + '</p></label></td>';
-          // console.log("inside table2");
-          // }
-        }
-        str += '</tr>';
+        // for (var col in data[i][row]){
+        str += '<td><label><p> | ' + data[i][row] + '&emsp;&emsp;' + '</p></label></td>';
+        // console.log("inside table2");
+        // }
       }
-      str +='</table>';
-      res.send(str)
+      str += '</tr>';
+    }
+    str += '</table>';
+    res.send(str)
 
-      console.log("All Items printed successfully ");
-    });
+    console.log("All Items printed successfully ");
+  });
 });
 
 
 ///// Place Order ////////
 
-app.post('/place_ord', (req,res)=>{
+app.post('/place_ord', (req, res) => {
 
   console.log("pohnch gaya2")
-  connection.query(`Update storage Set Quantity = Quantity + ${req.body.quantity}  Where S_Itemkey = ${req.body.itemID};`, function(err, data){
-  //connection.query(`If Exists (Select S_Itemkey From storage where S_Itemkey = ${req.body.itemID}) Update storage Set Quantity = Quantity + ${req.body.quantity}  Where S_Itemkey = ${req.body.itemID} If Exists (Select * From storage Where S_Itemkey = ${req.body.itemID});`, function(err, data){
-    if(err){
+  connection.query(`Update storage Set Quantity = Quantity + ${req.body.quantity}  Where S_Itemkey = ${req.body.itemID};`, function (err, data) {
+    //connection.query(`If Exists (Select S_Itemkey From storage where S_Itemkey = ${req.body.itemID}) Update storage Set Quantity = Quantity + ${req.body.quantity}  Where S_Itemkey = ${req.body.itemID} If Exists (Select * From storage Where S_Itemkey = ${req.body.itemID});`, function(err, data){
+    if (err) {
       res.send("<h2> Error occured - Invalid Input </h2>");
       return console.error(err.message);
     }
@@ -666,7 +672,7 @@ app.post('/place_ord', (req,res)=>{
     res.send("<h2> Item Ordered Successfully! <br> Go back to previous page to perform other functions <h2>");
     console.log("Item Ordered Successfully!");
   });
-// });
+  // });
 });
 
 ///////////////////////////////////////////////////
