@@ -143,12 +143,13 @@ app.post("/emp_login", function (req, res) {
     function (err, rows) {
       if (err) {
         console.log(err.mess);
-        res.send("Error encountered while updating");
+        // res.send("Error encountered while updating");
         return console.error(err.message);
       }
       if (rows.length < 1) {
         console.log(rows);
         res.send("Credentials not found");
+        // return console.error(err.message);
       } else {
         console.log(rows);
 
@@ -161,13 +162,17 @@ app.post("/emp_login", function (req, res) {
           "<h1> Employee successfully logged in!</h1> <br> <h2> Click the button below to continue:</h2><br><br>";
         str += '<a href= "/templates/home.html" ><button> Click </button></a>';
 
-        // res.send(str);
+    
 
         if (rows[0]["Designation"] == "manager"){
+          console.log("manager hai bhai");
           res.sendFile(path.join(__dirname + "/templates/Manager.html"));}
         
         if (rows[0]["Designation"] == "restocker"){
           res.sendFile(path.join(__dirname + "/templates/Restocker.html"));}
+          
+        if (rows[0]["Designation"] == "supplier"){
+          res.sendFile(path.join(__dirname + "/my-app/public/index.html"));}
           
 
 
