@@ -646,8 +646,17 @@ app.post("/view_orders", function (req, res) {
 app.post("/cust_place_order", function (req, res) {
   // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
   connection.query(
-    `INSERT INTO ordersupp(Orderkey, OS_Custkey, Date, Status)
-  SELECT coalesce((SELECT Max(Orderkey) FROM ordersupp), 0) + 1, ?, NOW(), "placed";
+    `INSERT INTO ordersupp(Orderkey, OS_Custkey, Date, Status, OS_Empkey)
+  SELECT coalesce((SELECT Max(Orderkey) FROM ordersupp), 0) + 1, ?, NOW(), "placed", (Select OS_Empkey
+  from 
+  (Select OS_Empkey, count(OS_Empkey) As c From ordersupp
+  group by OS_Empkey) as t
+  Where t.c = 
+  (Select min(c)
+  From 
+  (Select OS_Empkey, count(OS_Empkey) As c From ordersupp
+  group by OS_Empkey) as a)
+  Limit 1);
   SELECT 1 FROM cart WHERE C_Custkey = ?;`,
     [cust_key, cust_key],
     function (err, rows) {
