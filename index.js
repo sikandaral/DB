@@ -9,7 +9,7 @@ import mysql from "mysql";
 import path from "path";
 // var path = require('path');
 import { fileURLToPath } from "url";
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
 // var url = require('url');
 // var fileURLToPath = require( 'fileURLToPath');
 
@@ -66,7 +66,7 @@ app.post("/cust_signup", (req, res) => {
   // connection.serialize(()=>{
 
   var password = req.body.password;
-  var hash = bcrypt.hashSync(password, 10);
+  var hash = bcryptjs.hashSync(password, 10);
   var username = req.body.username;
   var name = req.body.name;
   var address = req.body.address;
@@ -122,7 +122,7 @@ app.post("/cust_login", (req, res) => {
         res.send("Credentials not found");
       } else {
         // console.log("sdf", rows[0].Password);
-        const isValid = bcrypt.compareSync(password, rows[0].Password);
+        const isValid = bcryptjs.compareSync(password, rows[0].Password);
         //res.send("Customers logged in successfully");
         // console.log("Password valid: ", isValid);
         if (isValid) {
@@ -157,9 +157,9 @@ app.post("/emp_login", function (req, res) {
       if (rows.length < 1) {
         res.send("Credentials not found");
       } else {
-        var hash = bcrypt.hashSync(pass, 10);
+        var hash = bcryptjs.hashSync(pass, 10);
         console.log(hash)
-        var isValid = bcrypt.compareSync(pass, rows[0].Password);
+        var isValid = bcryptjs.compareSync(pass, rows[0].Password);
         if (isValid) {
           connection.query(
             `Select Designation FROM employees WHERE (Username = ?);`,
@@ -385,7 +385,7 @@ app.post("/add_emp", (req, res) => {
     var name = req.body.name;
     var desig = req.body.designation;
     var pass = req.body.password;
-    var hash = bcrypt.hashSync(pass, 10);
+    var hash = bcryptjs.hashSync(pass, 10);
     connection.query(
       `INSERT INTO employees VALUES (?, ?, ?, ?, ?);`,
       [username, name, desig, username, hash],
