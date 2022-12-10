@@ -69,14 +69,60 @@ app.use(express.static(__dirname +'/templates'));
 
 
 
-
+// View Notifications
+app.post("/restock_view_notif", function(req, res){
+    // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
+    console.log("comingg here")
+    //document.write("My message");
+  //connection.query(`Select S_Itemkey,Quantity,Min_amount FROM storage Where Quantity<Min_amount;`, function(err, data){
+  connection.query(`Select S_Itemkey,Quantity,Min_amount FROM storage Where Quantity<Min_amount;`, function(err, data){
+        if(err){
+          res.send("Error encountered while updating");
+          return console.error(err.message);
+        }
+        if(!console.log(res))
+        {
+            res.send("No Notifications to show. All items are above their quantity threshold.");
+            return;
+        }
+        var str = '<table><tr>';
+        str += 'ITEMS LESS THAN THRESHOLD QUANTITY:';
+        for (let i = 0; i < data.length; i++){
+      
+          str += "<style>  body {background-color: tan; margin: 70px ;} h1 {color: Indigo; font-size: 35px;}"
+          str += "p {color: black; font-size: 17px;} </style>";
+          str +='<tr>';
+  
+          if (i == 0){
+            for (var row in data[i]){
+                str += '<td><label><h1> '+ row + '&emsp;&emsp;' + '<h1></label></td>';
+            }
+            str += "<tr></tr>";  
+          }
+    
+          for (var row in data[i]){
+            console.log("inside table1", data[i][row]);
+    
+            // for (var col in data[i][row]){
+            str += '<td><label><p> | '+ data[i][row] + '&emsp;&emsp;' + '</p></label></td>';
+            // console.log("inside table2");
+            // }
+          }
+          str += '</tr>';
+        }
+        str +='</table>';
+        res.send(str)
+  
+        console.log("All Items printed successfully ");
+      });
+  });
 
 
 // View Items
-app.post("/view_item", function(req, res){
+app.post("/restock_view_item", function(req, res){
   // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
   console.log("comingg here")
-connection.query(`Select S_Itemkey,Quantity,Min_amount FROM storage Where storage.Quantity<storage.Min_amount;`, function(err, data){
+connection.query(`Select S_Itemkey,Quantity,Min_amount FROM storage Order by Quantity DESC;`, function(err, data){
       if(err){
         res.send("Error encountered while updating");
         return console.error(err.message);
@@ -127,6 +173,11 @@ app.post('/place_ord', (req,res)=>{
       return console.error(err.message);
     }
     console.log(data)
+    if(data.changedRows == 0)
+    {
+        res.send("<h2> Error occured - Invalid Input, Item ID doesn't exist </h2>");
+        return;
+    }
     res.send("<h2> Item Ordered Successfully! <br> Go back to previous page to perform other functions <h2>");
     console.log("Item Ordered Successfully!");
   });
