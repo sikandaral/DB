@@ -773,7 +773,7 @@ app.post("/cancel_order", function (req, res) {
   );
 });
 
-let port = 3030;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
