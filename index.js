@@ -146,20 +146,36 @@ app.post("/emp_login", function (req, res) {
   var pass = req.body.password;
 
   connection.query(
-    `SELECT Password, Status FROM Employees WHERE Username = ?;`,
+    `SELECT Password FROM Employees WHERE Username = ?;`,
     [user],
     function (err, rows) {
+      //connection.query(`If Exists (Select S_Itemkey From storage where S_Itemkey = ${req.body.itemID}) Update storage Set Quantity = Quantity + ${req.body.quantity}  Where S_Itemkey = ${req.body.itemID} If Exists (Select * From storage Where S_Itemkey = ${req.body.itemID});`, function(err, data){
       if (err) {
-        console.log(err.mess);
-        // res.send("Error encountered while updating");
+        res.send("<h2> Error occured - Invalid Input </h2>");
         return console.error(err.message);
       }
       if (rows.length < 1) {
-        console.log(rows);
         res.send("Credentials not found");
-        // return console.error(err.message);
       } else {
-        console.log(rows);
+        var hash = bcrypt.hashSync(pass, 10);
+        console.log(hash)
+        var isValid = bcrypt.compareSync(pass, rows[0].Password);
+        if (isValid) {
+          connection.query(
+            `Select Designation FROM employees WHERE (Username = ?);`,
+            [user],
+            function (err, rows) {
+              if (err) {
+                console.log(err.mess);
+                // res.send("Error encountered while updating");
+                return console.error(err.message);
+              }
+              if (rows.length < 1) {
+                console.log(rows);
+                res.send("Credentials not found");
+                // return console.error(err.message);
+              } else {
+                console.log(rows);
 
                 var str =
                   "<style> body {background-color: linen; margin: 70px 350px ;} h1 {color: maroon; font-size: 50px;}";
@@ -308,6 +324,10 @@ app.post("/all_items", function (req, res) {
   });
 });
 
+
+
+
+
 //////////////////// MANAGER FUNCTIONS //////////////////
 
 ///// REMOVE EMPLOYEE ////////
@@ -316,6 +336,7 @@ app.post("/remove_emp", (req, res) => {
   // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
   // connection.serialize(()=>{
   console.log("pohnch gaya");
+  // count +=1
 
   if (req.body.designation == "manager") {
     // To see if a manager is not removed
@@ -385,32 +406,38 @@ app.post("/add_emp", (req, res) => {
 
 ///// EDIT EMP STATUS ///////////
 
-app.post('/edit_emp', (req,res)=>{
-  var stat = req.body.status
-  var id = req.body.ID
-  connection.query(`Update employees Set status = ? where Empkey = ? ;`,[stat,id] ,function(err, data){
-  //connection.query(`If Exists (Select S_Itemkey From storage where S_Itemkey = ${req.body.itemID}) Update storage Set Quantity = Quantity + ${req.body.quantity}  Where S_Itemkey = ${req.body.itemID} If Exists (Select * From storage Where S_Itemkey = ${req.body.itemID});`, function(err, data){
-    if(err){
-      res.send("<h2> Error occured - Invalid Input </h2>");
-      return console.error(err.message);
+app.post("/edit_emp", (req, res) => {
+  var stat = req.body.status;
+  var id = req.body.username;
+
+  if (id == "Ahmad_mukhtar_bhatti"){
+    res.send("<h2> Manager cannot be inactivated </h2>");
+  }
+
+  connection.query(
+    `Update employees Set status = ? where Username = ? ;`,
+    [stat, id],
+    function (err, data) {
+      //connection.query(`If Exists (Select S_Itemkey From storage where S_Itemkey = ${req.body.itemID}) Update storage Set Quantity = Quantity + ${req.body.quantity}  Where S_Itemkey = ${req.body.itemID} If Exists (Select * From storage Where S_Itemkey = ${req.body.itemID});`, function(err, data){
+      if (err) {
+        res.send("<h2> Error occured - Invalid Input </h2>");
+        return console.error(err.message);
+      }
+      console.log(data);
+      if (data.changedRows == 0) {
+        res.send(
+          "<h2> Error occured - You've either entered an incorrect ID or the status is already what you chose </h2>"
+        );
+        return;
+      }
+      res.send(
+        "<h2> Status changed Successfully! <br> Go back to previous page to perform other functions <h2>"
+      );
+      console.log(req.body);
+      console.log("Status changed Successfully!");
     }
-    console.log(data)
-    if(data.changedRows == 0)
-    {
-      res.send("<h2> Error occured - You've either entered an incorrect ID or the status is already what you chose </h2>");
-      return;
-    }
-    res.send("<h2> Status changed Successfully! <br> Go back to previous page to perform other functions <h2>");
-    console.log(req.body);
-    console.log("Status changed Successfully!");
-  });
+  );
 });
-
-
-
-
-
-
 
 //////////////////// CUSTOMER USE CASES /////////////////////
 //search item:
@@ -684,26 +711,30 @@ app.post("/cust_place_order", function (req, res) {
         connection.query(
           `UPDATE project.storage
                       SET Quantity = Quantity - (SELECT Quantity FROM cart WHERE(C_Custkey = ?) LIMIT 1)
-                      WHERE S_itemkey = (SELECT C_Itemkey FROM cart WHERE(C_Custkey = ?) LIMIT 1);`,[cust_key, cust_key] ,function (err, rows) {
-        if (err) {
-          res.send("error encountered while placing order");
-          return console.error(err.message);
-        }
-      });
-      connection.query(`DELETE FROM cart where C_Custkey = ? LIMIT 1;`,[cust_key] ,function (err, rows) {
-        if (err) {
-          res.send("error encountered while placing order");
-          return console.error(err.message);
-        }
-      });
-
-
+                      WHERE S_itemkey = (SELECT C_Itemkey FROM cart WHERE(C_Custkey = ?) LIMIT 1);`,
+          [cust_key, cust_key],
+          function (err, rows) {
+            if (err) {
+              res.send("error encountered while placing order");
+              return console.error(err.message);
+            }
+          }
+        );
+        connection.query(
+          `DELETE FROM cart where C_Custkey = ? LIMIT 1;`,
+          [cust_key],
+          function (err, rows) {
+            if (err) {
+              res.send("error encountered while placing order");
+              return console.error(err.message);
+            }
+          }
+        );
+      }
+      res.send("Order placed!");
     }
-    res.send("Order placed!");
-  });
+  );
 });
-
-
 
 //////// Cancel Order ////////
 
@@ -886,6 +917,9 @@ app.post("/place_ord", (req, res) => {
   );
   // });
 });
+
+
+
 
 ////////////////// SUPPLIER/DISTRIBUTOR ////////////////
 
