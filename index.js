@@ -173,7 +173,7 @@ app.post("/emp_login", function (req, res) {
   var user = req.body.username
   var pass = req.body.password
   connection.query(
-    `Select Designation FROM employees WHERE ((Username = ?) and (Password =  ?));`,
+    `Select Designation, Status FROM employees WHERE ((Username = ?) and (Password =  ?));`,
     [user, pass],
     function (err, rows) {
       if (err) {
@@ -185,6 +185,9 @@ app.post("/emp_login", function (req, res) {
         console.log(rows);
         res.send("Credentials not found");
         // return console.error(err.message);
+      if (rows[0]["Status"]!= "ACTIVE"){
+        res.send("Employee is not active");
+      }
       } else {
         console.log(rows);
 
@@ -225,7 +228,7 @@ app.post("/emp_login", function (req, res) {
 app.post("/all_emp", function (req, res) {
   console.log("comingg here");
   connection.query(
-    `Select Name, Designation, Username FROM employees;`,
+    `Select Name, Designation, Username, Status FROM employees;`,
     function (err, data) {
       if (err) {
         res.send("Error encountered while updating");
@@ -335,7 +338,6 @@ app.post("/remove_emp", (req, res) => {
   // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
   // connection.serialize(()=>{
   console.log("pohnch gaya");
-  // count +=1
 
   if (req.body.designation == "manager") {
     // To see if a manager is not removed
@@ -406,9 +408,15 @@ app.post("/add_emp", (req, res) => {
 ///// EDIT EMP STATUS ///////////
 
 app.post('/edit_emp', (req,res)=>{
-  var stat = req.body.status
-  var id = req.body.ID
-  connection.query(`Update employees Set status = ? where Empkey = ? ;`,[stat,id] ,function(err, data){
+
+  var stat = req.body.status;
+  var id = req.body.username;
+
+  if (id == "Ahmad_mukhtar_bhatti"){
+    res.send("<h2> Manager cannot be inactivated </h2>");
+  }
+
+  connection.query(`Update employees Set status = ? where Username = ? ;`,[stat,id] ,function(err, data){
   //connection.query(`If Exists (Select S_Itemkey From storage where S_Itemkey = ${req.body.itemID}) Update storage Set Quantity = Quantity + ${req.body.quantity}  Where S_Itemkey = ${req.body.itemID} If Exists (Select * From storage Where S_Itemkey = ${req.body.itemID});`, function(err, data){
     if(err){
       res.send("<h2> Error occured - Invalid Input </h2>");
@@ -660,6 +668,25 @@ app.post("/cust_place_order", function (req, res) {
           return console.error(err.message);
         }
       });
+
+
+      //// Assigning to employee with least orders ////
+      connection.query(`INSERT INTO ordersupp(OS_Empkey)
+      Values (Select OS_Empkey
+        from 
+        (Select OS_Empkey, count(OS_Empkey) As c From ordersupp
+        group by OS_Empkey) as t
+        Where t.c = 
+        (Select min(c)
+        From 
+        (Select OS_Empkey, count(OS_Empkey) As c From ordersupp
+        group by OS_Empkey) as a)
+        Limit 1);`,function (err, rows) {
+          if (err) {
+            res.send("error encountered giving the order to an employee");
+            return console.error(err.message);
+
+
 
 
     }
