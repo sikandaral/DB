@@ -143,6 +143,28 @@
                 <input type="submit" value="Submit">
                 
             </form>
+            
+            <br><br>
+            <h2> Edit Employee Status </h2>
+            
+            <form action="/edit_emp" method="post">
+
+                <label for="ID">ID:</label>&emsp;
+                <input type="text" id="ID" name="ID"><br>
+
+                <label for="status">Change Status to:</label><br>
+
+                <input type="radio" name="status" value="ACTIVE">
+                <label for="active">ACTIVE</label><br>
+
+                <input type="radio" name="status" value="INACTIVE">
+                <label for="inactive"> INACTIVE</label><br>
+                
+
+                <button type ="reset">Reset</button>
+                <input type="submit" value="Submit">
+                
+            </form>
         </fieldset>
 
     </div>

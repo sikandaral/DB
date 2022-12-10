@@ -1,8 +1,9 @@
+
 <!DOCTYPE html>
 <html>
 <head>
     <title>Page Title</title>
-    <link rel="stylesheet" type="text/css" href="style.css"/>
+    <link rel="stylesheet" type="text/css" href="Restocker.css"/>
 </head>
 
 <style>
@@ -20,7 +21,7 @@
     }
 </style>
 
-<body background="image.jpg">
+<body background="Restocker.jpg">
     <div id="navbar-div">
         <form action = "/logout" method="post">
             <input type="submit" value="Logout">
@@ -34,9 +35,15 @@
         <p>RESTOCKER SECTION</p>
     </div><br>
     <div class = "form-page">
-        <h3> Click the button below to view items low in quantity </h3>     
+        <h3> Click the button below to view items </h3>     
         <form action="/restock_view_item" method="post">
             <input type = "Submit" value="View Items">
+        </form>
+        <br>
+    <div class = "form-page2">
+        <h3> Click the button below to view Notifications </h3>     
+        <form action="/restock_view_notif" method="post">
+            <input type = "Submit" value="View Notifications">
         </form>
         <br>
     <div class="Order">
