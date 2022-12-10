@@ -85,10 +85,15 @@ app.post("/cust_signup", (req, res) => {
 
   var password = req.body.password
   var hash = bcrypt.hashSync(password, 10);
+  var username = req.body.username;
+  var name = req.body.name;
+  var address = req.body.address;
+  var contact = req.body.contact;
 
   // console.log("pohnch gaya", hash, password);
   connection.query(
-    `INSERT INTO customers (Custkey, Name, Username, Password, Address, Contact) VALUES("${req.body.username}", "${req.body.name}", "${req.body.username}", "${hash}", "${req.body.address}", ${req.body.contact});`,
+    `INSERT INTO customers (Custkey, Name, Username, Password, Address, Contact) VALUES(?, ?, ?, ?, ?, ?);`,
+    [username, name, username, hash, address, contact],
     function (err) {
       if (err) {
         res.send("Error occured - form entries are incorrect");
@@ -100,6 +105,20 @@ app.post("/cust_signup", (req, res) => {
       console.log("Customer signed up successfully", hash);
 
     });
+    /*
+    connection.query(
+      `INSERT INTO customers (Custkey, Name, Username, Password, Address, Contact) VALUES("${req.body.username}", "${req.body.name}", "${req.body.username}", "${hash}", "${req.body.address}", ${req.body.contact});`,
+      function (err) {
+        if (err) {
+          res.send("Error occured - form entries are incorrect");
+          return console.error(err.message);
+        }
+        res.send(
+          "<h2> Customer signed up successfully! <br> Go back to previous page and log in. <h2>"
+        );
+        console.log("Customer signed up successfully", hash);
+  
+      });*/
 
 
 
@@ -111,9 +130,10 @@ var cust_key;
 app.post("/cust_login", (req, res) => {
   // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
   var password = req.body.password
-
+  var username = req.body.username
   connection.query(
-    `Select Password FROM customers WHERE ((Username = "${req.body.username}"));`,
+    `Select Password FROM customers WHERE ((Username = ?));`,
+    [username],
     function (err, rows) {
       if (err) {
         res.send("Error encountered while logging in");
@@ -150,8 +170,11 @@ var emp_key;
 var emp_pass;
 app.post("/emp_login", function (req, res) {
   console.log("yahaan agaya");
+  var user = req.body.username
+  var pass = req.body.password
   connection.query(
-    `Select Designation FROM employees WHERE ((Username = "${req.body.username}") and (Password =  "${req.body.password}"));`,
+    `Select Designation FROM employees WHERE ((Username = ?) and (Password =  ?));`,
+    [user, pass],
     function (err, rows) {
       if (err) {
         console.log(err.mess);
@@ -320,8 +343,11 @@ app.post("/remove_emp", (req, res) => {
       "<h2> Cannot remove a MANAGER! <br> Go back to previous page to perform other functions <h2>"
     );
   } else {
+    var username = req.body.username
+    var desig = req.body.designation
     connection.query(
-      `DELETE FROM employees WHERE (Username = "${req.body.username}" and Designation = "${req.body.designation}");`,
+      `DELETE FROM employees WHERE (Username = ? and Designation = ?);`,
+      [username, desig],
       function (err, data) {
         if (err) {
           res.send("Error occured - form entries are incorrect");
@@ -355,8 +381,12 @@ app.post("/add_emp", (req, res) => {
       "<h2> Cannot add a manager! <br> Go back to previous page to perform other functions <h2>"
     );
   } else {
+    var username = req.body.username
+    var name = req.body.name
+    var desig = req.body.designation
+    var pass = req.body.password
     connection.query(
-      `INSERT INTO employees VALUES ("${req.body.username}", "${req.body.name}", "${req.body.designation}", "${req.body.username}", "${req.body.password}");`,
+      `INSERT INTO employees VALUES (?, ?, ?, ?, ?);`, [username, name, desig, username, pass],
       function (err, data) {
         if (err) {
           res.send("<h2> Error occured - Username already taken </h2>");
@@ -376,8 +406,9 @@ app.post("/add_emp", (req, res) => {
 ///// EDIT EMP STATUS ///////////
 
 app.post('/edit_emp', (req,res)=>{
-
-  connection.query(`Update employees Set status = "${req.body.status}" where Empkey = "${req.body.ID}" ;`, function(err, data){
+  var stat = req.body.status
+  var id = req.body.ID
+  connection.query(`Update employees Set status = ? where Empkey = ? ;`,[stat,id] ,function(err, data){
   //connection.query(`If Exists (Select S_Itemkey From storage where S_Itemkey = ${req.body.itemID}) Update storage Set Quantity = Quantity + ${req.body.quantity}  Where S_Itemkey = ${req.body.itemID} If Exists (Select * From storage Where S_Itemkey = ${req.body.itemID});`, function(err, data){
     if(err){
       res.send("<h2> Error occured - Invalid Input </h2>");
@@ -405,7 +436,8 @@ app.post('/edit_emp', (req,res)=>{
 //search item:
 app.post("/cust_search", function (req, res) {
   // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
-  connection.query(`Select * FROM items WHERE (Name LIKE "%${req.body.search}%" OR Name = "${req.body.search}");`, function (err, data) {
+  var search_ = "%" + req.body.search + "%"
+  connection.query(`Select * FROM items WHERE (Name LIKE ? OR Name = ?);`,[search_, search_], function (err, data) {
     if (err) {
       res.send("Error encountered while searching");
       return console.error(err.message);
@@ -446,16 +478,21 @@ app.post("/cust_search", function (req, res) {
 
 //add item to cart:
 app.post("/select_item", function (req, res) {
+  var item_name = req.body.addtocart
+  var quantity = req.body.cartquantity
+
+
   connection.query(`insert into cart (C_Custkey, C_Itemkey, Quantity) 
-  Select "${cust_key}", (select Item_key from items where Name = "${req.body.addtocart}" ), ${req.body.cartquantity} 
-  where (select Quantity from storage where S_itemkey = (select Item_key from items where Name = "${req.body.addtocart}" )) - ${req.body.cartquantity} > 0 ;`, function (err, rows) {
+  Select ?, (select Item_key from items where Name = ? ), ? 
+  where (select Quantity from storage where S_itemkey = (select Item_key from items where Name = ? )) - ? > 0 ;`,
+  [cust_key ,item_name, quantity, item_name, quantity], function (err, rows) {
     if (err) {
       res.send("Error encountered while adding to cart" + cust_key);
       console.log(req.body.addtocart + " " + req.body.cartquantity)
       return console.error(err.message);
     }
     if (rows.affectedRows == 0) {
-      res.send("Invalid")
+      res.send("Invalid item name")
     } else {
       res.send("Added " + req.body.cartquantity + " " + req.body.addtocart + " successfully");
     }
@@ -467,7 +504,8 @@ app.post("/select_item", function (req, res) {
 //remove item from to cart:
 app.post("/remove_item", function (req, res) {
   // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
-  connection.query(`DELETE FROM cart WHERE (C_Custkey = "${cust_key}" AND C_Itemkey = (SELECT Item_key FROM items WHERE Name = "${req.body.removefromcart}") );`, function (err, rows) {
+  var item_name = req.body.removefromcart
+  connection.query(`DELETE FROM cart WHERE (C_Custkey = ? AND C_Itemkey = (SELECT Item_key FROM items WHERE Name = ?) );`, [cust_key, item_name],function (err, rows) {
     if (err) {
       res.send("Error encountered while removing");
       return console.error(err.message);
@@ -485,7 +523,8 @@ app.post("/remove_item", function (req, res) {
 
 app.post("/view_cart", function (req, res) {
   // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
-  connection.query(`Select * FROM cart WHERE (C_Custkey = "${cust_key}");`, function (err, data) {
+
+  connection.query(`Select * FROM cart WHERE (C_Custkey = ?);`,[cust_key] ,function (err, data) {
     if (err) {
       res.send("Error encountered while searching");
       return console.error(err.message);
@@ -525,7 +564,10 @@ app.post("/view_cart", function (req, res) {
 
 app.post("/view_orders", function (req, res) {
   // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
-  connection.query(`Select * FROM project.order WHERE (O_Orderkey = (SELECT Orderkey FROM ordersupp WHERE OS_Custkey = "${cust_key}"));`, function (err, data) {
+  connection.query(`SELECT * 
+  FROM project.order as o
+  INNER JOIN ordersupp as os
+  ON os.Orderkey = o.O_Orderkey AND os.OS_Custkey = ?;`,[cust_key], function (err, data) {
     if (err) {
       res.send("Error encountered while searching");
       return console.error(err.message);
@@ -569,9 +611,10 @@ app.post("/view_orders", function (req, res) {
 app.post("/cust_place_order", function (req, res) {
   // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
   connection.query(`INSERT INTO ordersupp(Orderkey, OS_Custkey, Date, Status)
-  SELECT coalesce(MAX((SELECT Orderkey FROM ordersupp)), 0) + 1, "${cust_key}", NOW(), "placed";
-  SELECT 1 FROM cart WHERE C_Custkey = "${cust_key}";`, [0, 1], function (err, rows) {
+  SELECT coalesce((SELECT Max(Orderkey) FROM ordersupp), 0) + 1, ?, NOW(), "placed";
+  SELECT 1 FROM cart WHERE C_Custkey = ?;`,[cust_key, cust_key], function (err, rows) {
     if (err) {
+      console.log("test 1");
       res.send("error encountered while placing order");
       return console.error(err.message);
     }
@@ -593,16 +636,25 @@ app.post("/cust_place_order", function (req, res) {
 
     for (let i = 0; i < rows[1].length; i++) {
 
-      connection.query(`INSERT INTO project.order(O_Orderkey, O_Itemkey, Quantity) 
+      connection.query(`INSERT INTO project.order(O_Orderkey, O_Itemkey, Quantity, Status) 
       SELECT (SELECT Max(Orderkey) FROM ordersupp), 
-             (SELECT C_Itemkey FROM cart WHERE(C_Custkey = "${cust_key}") LIMIT 1),
-             (SELECT Quantity FROM cart WHERE(C_Custkey = "${cust_key}") LIMIT 1);`, function (err, rows) {
+             (SELECT C_Itemkey FROM cart WHERE(C_Custkey = ?) LIMIT 1),
+             (SELECT Quantity FROM cart WHERE(C_Custkey = ?) LIMIT 1),
+             "Placed";`, [cust_key, cust_key],function (err, rows) {
         if (err) {
           res.send("error encountered while placing order");
           return console.error(err.message);
         }
       });
-      connection.query(`DELETE FROM cart where C_Custkey = "${cust_key}" LIMIT 1;`, function (err, rows) {
+      connection.query(`UPDATE project.storage
+                      SET Quantity = Quantity - (SELECT Quantity FROM cart WHERE(C_Custkey = ?) LIMIT 1)
+                      WHERE S_itemkey = (SELECT C_Itemkey FROM cart WHERE(C_Custkey = ?) LIMIT 1);`,[cust_key, cust_key] ,function (err, rows) {
+        if (err) {
+          res.send("error encountered while placing order");
+          return console.error(err.message);
+        }
+      });
+      connection.query(`DELETE FROM cart where C_Custkey = ? LIMIT 1;`,[cust_key] ,function (err, rows) {
         if (err) {
           res.send("error encountered while placing order");
           return console.error(err.message);
@@ -621,9 +673,11 @@ app.post("/cust_place_order", function (req, res) {
 
 app.post("/cancel_order", function (req, res) {
   // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
+  var orderkey = req.body.cancelorder
   connection.query(`UPDATE project.order
                     SET Status = "Cancelled"
-                    WHERE(O_Orderkey = (SELECT Orderkey from ordersupp WHERE(OS_Custkey = "${cust_key}" AND Orderkey = "${req.body.cancelorder}"  AND (Status != "Completed" OR Status != "Delivering"))));`, function (err, rows) {
+                    WHERE(O_Orderkey = (SELECT Orderkey from ordersupp WHERE(OS_Custkey = ? AND Orderkey = ?  AND (Status != "Completed" OR Status != "Delivering"))));`, 
+                    [cust_key, orderkey],function (err, rows) {
     if (err) {
       res.send("Error encountered while searching");
       return console.error(err.message);
@@ -634,7 +688,8 @@ app.post("/cancel_order", function (req, res) {
   });
   connection.query(`UPDATE project.ordersupp 
                     SET Status = "Cancelled"
-                    WHERE (OS_Custkey = "${cust_key}" AND Orderkey = "${req.body.cancelorder}"  AND (Status != "Completed" OR Status != "Delivering"));`, function (err, rows) {
+                    WHERE (OS_Custkey = ? AND Orderkey = ?  AND (Status != "Completed" OR Status != "Delivering"));`,
+                    [cust_key, orderkey] ,function (err, rows) {
     if (err) {
       res.send("Error encountered while searching");
       return console.error(err.message);
@@ -643,6 +698,7 @@ app.post("/cancel_order", function (req, res) {
     res.send("Order " + req.body.cancelorder + "has been cancelled");
     console.log("order cancelled succesfully " + cust_key);
   });
+
 })
 
 let port = 3030;
@@ -753,7 +809,9 @@ connection.query(`Select S_Itemkey,Quantity,Min_amount FROM storage Order by Qua
 app.post('/place_ord', (req,res)=>{
 
 console.log("pohnch gaya2")
-connection.query(`Update storage Set Quantity = Quantity + ${req.body.quantity}  Where S_Itemkey = ${req.body.itemID};`, function(err, data){
+var quantity = req.body.quantity
+var itemid = req.body.itemID
+connection.query(`Update storage Set Quantity = Quantity + ?  Where S_Itemkey = ?;`,[quantity, itemid] ,function(err, data){
 //connection.query(`If Exists (Select S_Itemkey From storage where S_Itemkey = ${req.body.itemID}) Update storage Set Quantity = Quantity + ${req.body.quantity}  Where S_Itemkey = ${req.body.itemID} If Exists (Select * From storage Where S_Itemkey = ${req.body.itemID});`, function(err, data){
   if(err){
     res.send("<h2> Error occured - Invalid Input </h2>");
@@ -935,7 +993,6 @@ app.post("/order_supplied", (req, res) => {
 
 ////// Logout /////////////
 
-var cust_key;
 app.post("/logout", (req, res) => {
   // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
   connection.query(
@@ -946,15 +1003,10 @@ app.post("/logout", (req, res) => {
         return console.error(err.message);
       }
       {
+        cust_key = null
         console.log("Logged out successfully");
       }
       res.sendFile(path.join(__dirname + "/templates/home.html"));
     }
   );
 });
-
-
-
-
-
-
