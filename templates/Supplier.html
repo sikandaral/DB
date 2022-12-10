@@ -189,33 +189,42 @@
 
 <body>
   <main>
-    <!-- intro section -->
+
     <section class="intro">
-      <h1 class="title">Black Friday Deals</h1>
-      <p>Get up to 50% off on all our products and services. Hurry up, the offer ends in 24 hours.</p>
+      <h1 class="title">Welcome Supplier Bhai!</h1>
+      <p>Kindly check if you have any pending orders which you need to deliver</p>
     </section>
 
-    <!-- sign-up section -->
+
+
+
+  
     <section class="sign-up">
-      <p class="sign-up-para">Sign up for our newsletter and get 10% off your first purchase</p>
-      <!-- the form itself -->
-      <form class="sign-up-form">
+      <p class="sign-up-para">Click the button below to view orders</p>
+      
+      <form action="/supp_view_orders" method = "post">
+        <input class="submit-btn" type="submit" value="View pending orders">
+      </form>
+
+      <form action="/supp_view_order_hist" method = "post">
+        <input class="submit-btn" type="submit" value="View your order history">
+      </form>
+
+
+
+
+
+      <form action = "/order_supplied" method = "post">
         <div class="form-input">
-          <input type="text" name="first-name" id="first-name" placeholder="First Name" required>
+          <input type="text" name="Order_key" id="Order_key" placeholder="Order key" required>
           <span>!</span>
-          <p class="warning">First name cannot be empty</p>
+          <p class="warning">Order key name cannot be empty</p>
         </div>
 
         <div class="form-input">
-          <input type="text" name="last-name" id="last-name" placeholder="Last Name" required>
+          <input type="text" name="retype_order_key" id="retype_order_key" placeholder="retype order key" required>
           <span>!</span>
-          <p class="warning">Last name cannot be empty</p>
-        </div>
-
-        <div class="form-input">
-          <input type="email" name="email" id="email" placeholder="Email Address" required>
-          <span>!</span>
-          <p class="warning">Looks like this is not an email</p>
+          <p class="warning">Order key name cannot be empty</p>
         </div>
 
         <div class="form-input">

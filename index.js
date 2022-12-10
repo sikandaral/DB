@@ -140,7 +140,14 @@ app.post("/cust_login", (req, res) => {
 
 });
 
+
+
+
+
 //////////////////// Employee Log In ////////////////////////////////
+
+var emp_key;
+var emp_pass;
 app.post("/emp_login", function (req, res) {
   console.log("yahaan agaya");
   connection.query(
@@ -177,11 +184,14 @@ app.post("/emp_login", function (req, res) {
           res.sendFile(path.join(__dirname + "/templates/Restocker.html"));}
           
         if (rows[0]["Designation"] == "supplier"){
-          res.sendFile(path.join(__dirname + "/my-app/public/index.html"));}
+          emp_key = req.body.username;
+          emp_pass = req.body.password;
+          console.log("just checking")
+          res.sendFile(path.join(__dirname + "/templates/Supplier.html"));}
           
 
         console.log("Employee logged in successfully!");
-      }
+        }
     }
   );
 });
@@ -335,10 +345,7 @@ app.post("/remove_emp", (req, res) => {
 });
 
 
-
-
-
-////////////// ADD EMPLOYEE //////////////////
+//////// ADD EMPLOYEE ///////////
 
 app.post("/add_emp", (req, res) => {
   console.log("pohnch gaya");
@@ -387,6 +394,10 @@ app.post('/edit_emp', (req,res)=>{
     console.log("Status changed Successfully!");
   });
 });
+
+
+
+
 
 
 
@@ -551,9 +562,10 @@ app.post("/view_orders", function (req, res) {
   });
 });
 
-//Place Order
 
 
+
+///// Place Order  //////
 app.post("/cust_place_order", function (req, res) {
   // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
   connection.query(`INSERT INTO ordersupp(Orderkey, OS_Custkey, Date, Status)
@@ -603,7 +615,9 @@ app.post("/cust_place_order", function (req, res) {
   });
 });
 
-// Cancel Order
+
+
+//////// Cancel Order ////////
 
 app.post("/cancel_order", function (req, res) {
   // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
@@ -759,6 +773,164 @@ connection.query(`Update storage Set Quantity = Quantity + ${req.body.quantity} 
 
 
 
+
+
+
+////////////////// SUPPLIER/DISTRIBUTOR ////////////////
+
+
+///// View Pending orders /////////
+app.post("/supp_view_orders", function (req, res) {
+
+  console.log("viewingg orders!!");
+  connection.query(`Select Orderkey, OS_Custkey, Date, Status, Name, Address, Contact
+                      FROM ordersupp, customers
+                      Where ((customers.Custkey = ordersupp.OS_Custkey) and (ordersupp.OS_Empkey = "${emp_key}") and (ordersupp.Status = 1));`
+  , function (err, data) {
+    if (err) {
+      console.log("its getting errors");
+      res.send("Error encountered while updating");
+      return console.error(err.message);
+    };
+    
+    var str = `<h1> All PENDING ORDERS for "${emp_key}" </h2><br>`;
+    str += "<table><tr>";
+    for (let i = 0; i < data.length; i++) {
+      str +=
+        "<style>  body {background-color: tan; margin: 70px ;} h1 {color: Indigo; font-size: 35px;}";
+      str += "p {color: black; font-size: 17px;} </style>";
+      str += "<tr>";
+
+      if (i == 0) {
+        for (var row in data[i]) {
+          str +=
+            "<td><label><h1> " + row + "&emsp;&emsp;" + "<h1></label></td>";
+        }
+        str += "<tr></tr>";
+      }
+
+      for (var row in data[i]) {
+        console.log("inside table1", data[i][row]);
+
+        str +=
+          "<td><label><p> | " +
+          data[i][row] +
+          "&emsp;&emsp;" +
+          "</p></label></td>";
+
+      }
+      str += "</tr>";
+    }
+    str += "</table>";
+    res.send(str);
+
+    console.log("All Orders printed successfully ");
+  });
+});
+
+
+////// View Order History //////////
+app.post("/supp_view_order_hist", function (req, res) {
+
+  console.log("viewingg orders history!!");
+  connection.query(`Select Orderkey, OS_Custkey, Date, Status, Name, Address, Contact
+                      FROM ordersupp, customers
+                      Where ((customers.Custkey = ordersupp.OS_Custkey) and (ordersupp.OS_Empkey = "${emp_key}"));`
+  , function (err, data) {
+    if (err) {
+      console.log("its getting errors");
+      res.send("Error encountered while updating");
+      return console.error(err.message);
+    };
+    
+    var str = `<h1> ORDERS HISTORY for "${emp_key}" </h2><br>`;
+    str += "<table><tr>";
+    for (let i = 0; i < data.length; i++) {
+      str +=
+        "<style>  body {background-color: tan; margin: 70px ;} h1 {color: Indigo; font-size: 35px;}";
+      str += "p {color: black; font-size: 17px;} </style>";
+      str += "<tr>";
+
+      if (i == 0) {
+        for (var row in data[i]) {
+          str +=
+            "<td><label><h1> " + row + "&emsp;&emsp;" + "<h1></label></td>";
+        }
+        str += "<tr></tr>";
+      }
+
+      for (var row in data[i]) {
+        console.log("inside table1", data[i][row]);
+
+        str +=
+          "<td><label><p> | " +
+          data[i][row] +
+          "&emsp;&emsp;" +
+          "</p></label></td>";
+
+      }
+      str += "</tr>";
+    }
+    str += "</table>";
+    res.send(str);
+
+    console.log("All Orders printed successfully ");
+  });
+});
+
+
+
+////// Inactivate pending Order //////
+
+app.post("/order_supplied", (req, res) => {
+  console.log("its here")
+  if (req.body.Password != emp_pass) {
+    res.send(
+      "<h2> Wrong password entered! <br> Go back to previous page to perform other functions <h2>"
+    );
+  } 
+  if (req.body.retype_order_key != req.body.Order_key) {
+    console.log("reached")
+    res.send(
+      "<h2> Order key donot match! <br> Go back to previous page to perform other functions <h2>"
+    );
+  }
+  else {
+    connection.query(
+      `UPDATE ordersupp
+      SET Status = 1
+      WHERE OS_Empkey = "${emp_key}";`,
+      function (err, data) {
+        if (err) {
+          res.send("Error occured - entries are incorrect");
+          return console.error(err.message);
+        }
+        else {
+          res.send(
+            "<h2> Action completed! <br> Go back to previous page to do other functions <h2>"
+          );
+          console.log("Sccessfully Supplied!");
+        }
+      }
+    );
+  }
+  // });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ///////////////////////////////////////////////////
 
 ////// Logout /////////////
@@ -780,3 +952,9 @@ app.post("/logout", (req, res) => {
     }
   );
 });
+
+
+
+
+
+
