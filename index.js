@@ -291,9 +291,12 @@ app.post("/all_items", function (req, res) {
   });
 });
 
+
+
+
 //////////////////// MANAGER FUNCTIONS //////////////////
 
-///// REEMOVE EMPLOYEE ////////
+///// REMOVE EMPLOYEE ////////
 
 app.post("/remove_emp", (req, res) => {
   // query = 'INSERT INTO customers (Name, Username, Password, Address, Contact) VALUES(?,?,?,?,?)';
@@ -335,7 +338,7 @@ app.post("/remove_emp", (req, res) => {
 
 
 
-//////////////// ADD EMPLOYEE /////////////////////////
+////////////// ADD EMPLOYEE //////////////////
 
 app.post("/add_emp", (req, res) => {
   console.log("pohnch gaya");
@@ -362,6 +365,28 @@ app.post("/add_emp", (req, res) => {
   // });
 });
 
+
+///// EDIT EMP STATUS ///////////
+
+app.post('/edit_emp', (req,res)=>{
+
+  connection.query(`Update employees Set status = "${req.body.status}" where Empkey = "${req.body.ID}" ;`, function(err, data){
+  //connection.query(`If Exists (Select S_Itemkey From storage where S_Itemkey = ${req.body.itemID}) Update storage Set Quantity = Quantity + ${req.body.quantity}  Where S_Itemkey = ${req.body.itemID} If Exists (Select * From storage Where S_Itemkey = ${req.body.itemID});`, function(err, data){
+    if(err){
+      res.send("<h2> Error occured - Invalid Input </h2>");
+      return console.error(err.message);
+    }
+    console.log(data)
+    if(data.changedRows == 0)
+    {
+      res.send("<h2> Error occured - You've either entered an incorrect ID or the status is already what you chose </h2>");
+      return;
+    }
+    res.send("<h2> Status changed Successfully! <br> Go back to previous page to perform other functions <h2>");
+    console.log(req.body);
+    console.log("Status changed Successfully!");
+  });
+});
 
 
 
@@ -614,7 +639,7 @@ app.listen(port, () => {
 
 
 
-////////////////  REST)CKER FUNCTIONS //////////////////////
+////////////////  RESTOCKER FUNCTIONS //////////////////////
 
 ////// View Notifications ////////////
 
